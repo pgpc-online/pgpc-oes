@@ -2,9 +2,10 @@
 
 1• FOLDER STRUCTURE 
 
-mainFolder/ *any name*
+mainFolder/
 │
 ├── app.py
+├── requirements.txt
 │
 ├── static/
 │   └── images/
@@ -28,7 +29,6 @@ mainFolder/ *any name*
 │
 └── database/
     └── main.db
-
 
 2• INSTALLATION GUIDE
 
