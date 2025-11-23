@@ -5,7 +5,6 @@
 mainFolder/ *any name*
 │
 ├── app.py
-├── requirements.txt
 │
 ├── static/
 │   └── images/
@@ -32,17 +31,9 @@ mainFolder/ *any name*
 
 
 2• INSTALLATION GUIDE
-Open Terminal (Ctrl + `) 
-bash:(one at a time)
 
-pip install flask
-pip install Flask-Mail
-pip install python-docx
-pip install werkzeug
 
-pip install python-dotenv
-pip install pillow
-pip install jinja2
+pip install -r requirements.txt
 
 
 
