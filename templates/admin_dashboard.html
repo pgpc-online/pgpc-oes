@@ -1,0 +1,231 @@
+{% extends "adminbase.html" %}
+
+{% block content %}
+
+<style>
+/* --- GOOGLE FONT --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f5f7fb;
+}
+
+/* --- PAGE TITLE --- */
+.page-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: #1a237e;
+    margin-bottom: 20px;
+}
+
+/* --- STAT CARDS --- */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+    margin-bottom: 35px;
+}
+
+.card {
+    background: #ffffff;
+    padding: 22px;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+    transition: all 0.2s ease;
+    border: 1px solid #e8eaf6;
+}
+
+.card:hover {
+    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+    transform: translateY(-4px);
+}
+
+.card small {
+    font-size: 14px;
+    color: #616161;
+}
+
+.card h2 {
+    font-size: 36px;
+    margin: 6px 0 0;
+    color: #1a237e;
+}
+
+
+.chart-container {
+    background: white;
+    padding: 24px;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    margin-top: 26px;
+    border: 1px solid #e6e8f5;
+}
+
+/* FIX chart height */
+.chart-container canvas {
+    max-height: 320px !important;
+    width: 100% !important;
+}
+
+/* --- CHART GRID (SIDE BY SIDE) --- */
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 22px;
+    margin-top: 26px;
+}
+
+/* --- TABLE --- */
+.recent-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 14px;
+}
+
+.recent-table th {
+    background: #e8eaf6;
+    color: #1a237e;
+    padding: 12px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.recent-table td {
+    padding: 11px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.recent-table tr:hover {
+    background: #f4f6ff;
+}
+</style>
+
+<div class="page-title">Admin Dashboard</div>
+
+<!-- ===== STAT CARDS ===== -->
+<div class="dashboard">
+    <div class="card">
+        <small>Total Students</small>
+        <h2>{{ total_students }}</h2>
+    </div>
+
+    <div class="card">
+        <small>Courses</small>
+        <h2>4</h2>
+    </div>
+
+    <!-- <div class="card">
+        <small>Approved</small>
+        <h2>{{ total_approved }}</h2>
+    </div> -->
+
+    <div class="card">
+        <small>Enrolled</small>
+        <h2>{{ total_enrolled }}</h2>
+    </div>
+
+    <!-- <div class="card">
+        <small>Male</small>
+        <h2>{{ male_count }}</h2>
+    </div>
+
+    <div class="card">
+        <small>Female</small>
+        <h2>{{ female_count }}</h2>
+    </div> -->
+</div>
+
+<!-- ===== CHARTS SIDE BY SIDE ===== -->
+<div class="chart-grid">
+
+    <div class="chart-container">
+        <h3>Gender Distribution</h3>
+        <canvas id="genderChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h3>Course Distribution</h3>
+        <canvas id="courseChart"></canvas>
+    </div>
+
+</div>
+
+
+<!-- ===== RECENT SUBMISSIONS ===== -->
+<div class="chart-container" style="margin-top: 30px;">
+    <h3>Recently Submitted Applications</h3>
+
+    <table class="recent-table">
+        <thead>
+            <tr>
+                <th>Application ID</th>
+                <th>Name</th>
+                <th>Program</th>
+                <th>Date Submitted</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for r in recent_submitted %}
+            <tr>
+                <td>{{ r.app_id }}</td>
+                <td>{{ r.first_name }} {{ r.last_name }}</td>
+                <td>{{ r.program }}</td>
+                <td>{{ r.created_at }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// ----------- GENDER PIE CHART -----------
+new Chart(document.getElementById("genderChart"), {
+    type: "pie",
+    data: {
+        labels: ["Male", "Female"],
+        datasets: [{
+        data: {{ [male_count, female_count] | tojson }},
+        backgroundColor: ["#3949ab", "#ff4081"],
+        hoverOffset: 8
+         }]
+    }
+});
+
+// ----------- COURSE BAR CHART -----------
+/* ----------- COURSE PIE CHART ----------- */
+new Chart(document.getElementById("courseChart"), {
+    type: "pie",
+    data: {
+        labels: {{ courses | tojson | safe }},
+        datasets: [{
+            data: {{ course_counts | tojson | safe }},
+            backgroundColor: [
+                "#1e88e5",
+                "#43a047",
+                "#fb8c00",
+                "#8e24aa"
+            ],
+            hoverOffset: 10
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: "bottom",
+                labels: { font: { size: 14 } }
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

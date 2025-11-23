@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 80px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            width: 350px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        a.button {
+            display: block;
+            margin: 15px 0;
+            padding: 12px;
+            background: #0066ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        a.button:hover {
+            background: #0053cc;
+        }
+        pre{
+            background: black;
+            width: auto;
+            text-align: justify;
+        }
+        code {color: rgb(81, 190, 18);}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome</h2>
+        <p>this is a fake homepage!</p>
+        
+        <a href="{{ url_for('login_page') }}">Login / Register</a>
+
+        <br>
+    find this line in flask, replace '<i>homepage.html</i>' with the proper filename:
+
+        <pre>
+            <code>
+            
+@app.route("/")
+def index():
+    return render_template(<span style="color: red">'homepage.html'</span>)
+
+        </code></pre>
+
+    </div>
+    
+</body>
+</html>

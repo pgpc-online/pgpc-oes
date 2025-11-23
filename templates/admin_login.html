@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login Portal</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+/* BACKGROUND */
+body {
+    background: linear-gradient(135deg, #f3f5f9 0%, #e6e9ef 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* MAIN CONTAINER */
+.container {
+    width: 90%;
+    max-width: 900px;
+    min-height: 480px;
+    display: flex;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e6e9ef;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    animation: fadeInUp 0.6s ease;
+}
+
+/* LEFT SIDE - FORM */
+.left-box {
+    flex: 1;
+    padding: 45px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.left-box img {
+    width: 80px;
+    display: block;
+    margin: 0 auto 15px;
+    border-radius: 10px;
+}
+
+.left-box h2 {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #1e2a38;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+/* INPUTS */
+.input-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #384553;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 45px 14px 14px;
+    border-radius: 10px;
+    border: 1px solid #cfd6df;
+    background: #fafbfc;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s ease;
+}
+
+.input-group input:focus {
+    border-color: #0066cc;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(0,102,204,0.15);
+}
+
+.input-group .fa {
+    position: absolute;
+    top: 57%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: #6b7b8c;
+    font-size: 16px;
+}
+
+.input-group input:focus + .fa {
+    color: #0066cc;
+}
+
+/* PASSWORD TOGGLE */
+.password-toggle {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+    color: #0066cc;
+}
+
+/* SUBMIT BUTTON */
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    background: #0a4fa3;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.login-btn:hover {
+    background: #093f82;
+    box-shadow: 0 6px 20px rgba(10,79,163,0.25);
+    transform: translateY(-2px);
+}
+
+.login-btn.loading {
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+/* FOOTER NOTE */
+.note {
+    margin-top: 18px;
+    text-align: center;
+    color: #6b7b8c;
+    font-size: 13px;
+}
+
+/* RIGHT PANEL */
+.right-box {
+    flex: 1;
+    background: linear-gradient(135deg, #0a4fa3 0%, #072e5e 100%);
+    color: white;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.right-box h1 {
+    font-size: 30px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.right-box p {
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.95;
+    max-width: 90%;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .container { flex-direction: column; }
+    .right-box { text-align: center; padding: 35px; }
+}
+
+/* FADE IN */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* TOAST */
+.toast {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 20px;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    border-radius: 10px;
+    z-index: 999;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LEFT PANEL -->
+    <div class="left-box">
+
+        <img src="https://i.ibb.co/B2kmvNGD/pgpc.jpg" alt="PGPC Logo">
+
+        <h2>Admin Login</h2>
+
+<form id="admin-login-form" method="POST" action="/admin">
+
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" name="username" required>
+                <i class="fa fa-user"></i>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" name="password" required>
+                <i class="fa fa-eye password-toggle" id="togglePassword"></i>
+            </div>
+
+            <button class="login-btn" id="login-btn" type="submit">Login</button>
+
+            <p class="note">For authorized administrative personnel only</p>
+        </form>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-box">
+        <h1>Administrator Portal</h1>
+        <p>Access and manage institutional records, student applications, and official administrative operations.</p>
+        <p>Your login is required to ensure secure system access.</p>
+    </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* Toast message */
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 3000);
+}
+
+/* Password visibility toggle */
+document.getElementById("togglePassword").addEventListener("click", function() {
+    const field = document.getElementById("password");
+    field.type = field.type === "password" ? "text" : "password";
+    this.classList.toggle("fa-eye-slash");
+});
+
+/* Login button loading */
+document.getElementById("admin-login-form").addEventListener("submit", function() {
+    const btn = document.getElementById("login-btn");
+    btn.classList.add("loading");
+    btn.innerText = "Processing...";
+});
+</script>
+
+</body>
+</html>

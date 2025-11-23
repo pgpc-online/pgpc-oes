@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ title if title else "Admin Panel" }}</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
+    body { background:#f4f6fa; display:flex; min-height:100vh; }
+
+    /* SIDEBAR */
+    .sidebar {
+        width:240px;
+        background:#1a237e;
+        color:white;
+        padding:20px;
+        position:fixed;
+        height:100vh;
+        top:0; left:0;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+    }
+    .sidebar h2 {
+        font-size:22px;
+        margin-bottom:30px;
+        letter-spacing:1px;
+    }
+
+    .nav-item {
+        display:flex;
+        align-items:center;
+        gap:12px;
+        padding:10px 14px;
+        margin-bottom:10px;
+        text-decoration:none;
+        color:white;
+        border-radius:8px;
+        transition:0.2s;
+        font-size:15px;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+        background:rgba(255,255,255,0.18);
+    }
+
+    /* MAIN */
+    .main {
+        margin-left:240px;
+        padding:30px;
+        width:calc(100% - 240px);
+    }
+
+    .page-title {
+        font-size:26px;
+        font-weight:700;
+        margin-bottom:20px;
+        color:#1a237e;
+    }
+    #toast-container {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 9999;
+}
+
+.toast {
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    animation: fadein 0.5s, fadeout 0.5s 3s;
+}
+
+.toast.success { background: #28a745; }
+.toast.error { background: #e53935; }
+.toast.info { background: #1e88e5; }
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1;   transform: translateY(0); }
+}
+
+@keyframes fadeout {
+  from { opacity: 1;   transform: translateY(0); }
+  to   { opacity: 0;   transform: translateY(-10px); }
+}
+
+.flash {
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    animation: fadeOut1 3s ease-out forwards;
+}
+
+@keyframes fadeOut1 {
+    0%   { opacity: 1; }
+    70%  { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+</style>
+
+{% block head %}{% endblock %}
+</head>
+
+<body>
+  <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-container">
+            {% for category, msg in messages %}
+                <div class="flash flash-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    {% for message in get_flashed_messages(with_categories=true) %}
+    <div class="flash-message alert alert-{{ message[0] }}">
+        {{ message[1] }}
+    </div>
+{% endfor %} -->
+
+
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Admin Panel</h2>
+
+    <a href="{{ url_for('admin_dashboard') }}"
+       class="nav-item {% if active_page=='dashboard' %}active{% endif %}">
+       <i class="fa-solid fa-gauge"></i> Dashboard
+    </a>
+
+    <a href="{{ url_for('manage_students') }}"
+       class="nav-item {% if active_page=='users' %}active{% endif %}">
+       <i class="fa-solid fa-users"></i> Manage Students
+    </a>
+
+    <a href="{{ url_for('admin_exam_schedule') }}" 
+   class="nav-item {% if active_page == 'exam_schedule' %}active{% endif %}">
+   <i class="fa-solid fa-calendar-check"></i>Exam Schedule
+    </a>
+
+
+    <a href="{{ url_for('admin_all_messages') }}"
+       class="nav-item {% if active_page=='messages' %}active{% endif %}">
+       <i class="fa-solid fa-envelope"></i> Messages
+    </a>
+
+    <a href="{{ url_for('admin_logout') }}" class="nav-item">
+       <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+    {% block content %}{% endblock %}
+</div>
+
+{% block scripts %}
+<!-- <script>
+setTimeout(() => {
+    document.querySelectorAll('.flash').forEach(el => {
+        el.style.opacity = "0";
+    });
+}, 2500); -->
+</script>
+{% endblock %}
+</body>
+</html>

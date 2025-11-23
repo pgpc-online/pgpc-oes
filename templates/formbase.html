@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PGPC Admission{% endblock %}</title>
+    {% block styles %}{% endblock %}
+</head>
+
+<style>
+  body { font-family: Arial, sans-serif; background:#f6f6f6; margin:0; padding:0; }
+  .container { max-width: 980px; margin: auto; background: #fff; padding:0; box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+
+  /* Header */ 
+  .header { 
+      background: linear-gradient(to right, #7ba6f9, #3a5fcf); 
+      color: white; 
+      text-align: center; 
+      padding-top: 10px; 
+      padding-bottom: 20px; 
+      height: 80px; 
+  } 
+  .header-content { 
+      display: flex; 
+      color: black; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 15px; 
+      line-height: 8px; 
+  } 
+  .header p {
+      margin-right: 70px; 
+  } 
+  .school-logo { 
+      width: 80px; 
+      height: 80px; 
+      border-radius: 50%; 
+  }
+
+  footer {
+      background: #2d4ea0;
+      color: white;
+      text-align: center;
+      padding: 25px 0;
+      font-size: 14px;
+      margin-top: 20px;
+  }
+
+  main { padding: 50px; }
+</style>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-content">
+
+        <!-- ✅ FIXED: Proper Flask static path -->
+        <img src="{{ url_for('static', filename='images/schoollogo.jpg') }}" alt="Logo" class="school-logo">
+
+        <div>
+          <h2>PADRE GARCIA POLYTECHNIC COLLEGE</h2>
+          <p>Brgy. Castillo, Padre Garcia Batangas 4224</p>
+          <p>padregarciapolytechniccollege@gmail.com</p>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+      “TAGA-PGPC AKO: MATALINO, DISIPLINADO, MABUTING TAO, IPINAGMAMALAKI KO!”
+    </footer>
+  </div>
+</body>
+</html>

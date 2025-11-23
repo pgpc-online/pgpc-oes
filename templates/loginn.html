@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login & Register</title>
+
+<!-- Icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ---------- GLOBAL ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: radial-gradient(circle at top, #06295c, #000a1d 70%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* Futuristic floating glow elements */
+body::before, body::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,255,255,0.25), transparent 70%);
+    filter: blur(80px);
+    z-index: -1;
+}
+body::before {
+    top: -150px;
+    right: -100px;
+}
+body::after {
+    bottom: -150px;
+    left: -100px;
+}
+
+/* ---------- CONTAINER ---------- */
+.container {
+    width: 900px;
+    max-width: 95%;
+    min-height: 520px;
+    display: flex;
+    border-radius: 18px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(0,255,255,0.25);
+    box-shadow: 0 0 40px rgba(0,255,255,0.2);
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---------- LEFT SIDE (Forms) ---------- */
+.left-box {
+    flex: 1;
+    padding: 45px;
+    color: #fff;
+}
+
+.left-box h2 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #00f6ff;
+    text-shadow: 0 0 12px rgba(0,255,255,0.6);
+    margin-bottom: 25px;
+}
+
+label {
+    font-size: 15px;
+    margin-top: 15px;
+    display: block;
+    font-weight: 500;
+}
+
+/* ---------- INPUTS ---------- */
+.input-box {
+    position: relative;
+    margin-top: 5px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 12px 45px 12px 15px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(0,255,255,0.3);
+    border-radius: 10px;
+    font-size: 15px;
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+.input-box input:focus {
+    border-color: #00f6ff;
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 0 15px rgba(0,255,255,0.5);
+}
+
+.input-box i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8feaff;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(90deg, #007bff, #00d0ff);
+    box-shadow: 0 0 15px rgba(0,255,255,0.4);
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(0,255,255,0.6);
+}
+
+/* Loading Spinner */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 3px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.left-box p {
+    margin-top: 15px;
+    text-align: center;
+}
+.left-box a {
+    color: #00f7ff;
+    text-decoration: none;
+}
+.left-box a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- RIGHT SIDE (Welcome Panel) ---------- */
+.right-box {
+    flex: 1;
+    background: linear-gradient(120deg, #003064, #006f9b);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+}
+
+.right-box h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(0,255,255,0.5);
+}
+
+.right-box p {
+    width: 80%;
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 14px 25px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 0 10px rgba(0,255,255,0.4);
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 820px) {
+    .container { flex-direction: column; }
+    .right-box { display: none; }
+    .left-box { padding: 35px 25px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== UI STRUCTURE ==================== -->
+<div class="container">
+
+    <div class="left-box">
+
+        <!-- LOGIN -->
+        <div id="login-container">
+            <h2>Login</h2>
+
+            <label>Email</label>
+            <div class="input-box">
+                <input type="text" id="login-email" placeholder="Email" required>
+                <i class="fa fa-user"></i>
+            </div>
+
+            <label>Password</label>
+            <div class="input-box">
+                <input type="password" id="login-password" placeholder="Password" required>
+                <i class="fa fa-eye" id="toggleLoginPassword"></i>
+            </div>
+
+            <button id="login-btn" class="btn">Login</button>
+
+            <p><a id="forgot-link" href="#">Forgot Password?</a></p>
+            <p>Don’t have an account? <a id="register-link" href="#">Register</a></p>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="register-container" style="display:none;">
+            <h2>Register</h2>
+
+            <label>Username</label>
+            <div class="input-box">
+                <input type="text" id="register-username" placeholder="Username">
+                <i class="fa fa-user"></i>
+            </div>
+
+            <label>Email</label>
+            <div class="input-box">
+                <input type="email" id="register-email" placeholder="Email">
+                <i class="fa fa-envelope"></i>
+            </div>
+
+            <label>Password</label>
+            <div class="input-box">
+                <input type="password" id="register-password" placeholder="Password">
+                <i class="fa fa-eye" id="toggleRegisterPassword"></i>
+            </div>
+
+            <button id="register-btn" class="btn">Register</button>
+
+            <p>Already have an account? <a id="login-link" href="#">Login</a></p>
+        </div>
+
+        <!-- FORGOT PASSWORD -->
+        <div id="forgot-container" style="display:none;">
+            <h2>Reset Password</h2>
+
+            <label>Email</label>
+            <div class="input-box">
+                <input type="email" id="forgot-email" placeholder="Enter your email">
+            </div>
+            <button id="send-otp-btn" class="btn">Send OTP</button>
+
+            <div id="reset-otp-section" style="display:none;">
+                <label>OTP</label>
+                <div class="input-box">
+                    <input type="text" id="reset-otp" maxlength="6" placeholder="Enter OTP">
+                </div>
+
+                <label>New Password</label>
+                <div class="input-box">
+                    <input type="password" id="new-password" maxlength="20" placeholder="New Password">
+                </div>
+
+                <button id="reset-password-btn" class="btn">Reset Password</button>
+            </div>
+        </div>
+
+        <!-- OTP VERIFICATION -->
+        <div id="otp-section" style="display:none;">
+            <h2>Verify OTP</h2>
+            <p>Enter the 6-digit OTP sent to your email:</p>
+
+            <div class="input-box">
+                <input type="text" id="otp" maxlength="6" placeholder="OTP">
+            </div>
+
+            <button id="verify-otp-btn" class="btn">Verify OTP</button>
+        </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-box">
+        <h1>WELCOME to PGPC ONLINE ENROLLMENT SYSTEM(OES)</h1>
+        <p>Create an account or log in to start your admission and enrollment processes.</p>
+    </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- ==================== JAVASCRIPT (your logic kept) ==================== -->
+<script>
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.innerText = msg;
+    t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 3000);
+}
+
+/* Toggle Passwords */
+document.getElementById("toggleLoginPassword").onclick = () => {
+    const input = document.getElementById("login-password");
+    input.type = input.type === "password" ? "text" : "password";
+};
+
+document.getElementById("toggleRegisterPassword").onclick = () => {
+    const input = document.getElementById("register-password");
+    input.type = input.type === "password" ? "text" : "password";
+};
+
+/* Switch Forms */
+document.getElementById("register-link").onclick = () => {
+    show("register-container"); hide("login-container");
+};
+document.getElementById("login-link").onclick = () => {
+    show("login-container"); hide("register-container");
+};
+document.getElementById("forgot-link").onclick = () => {
+    show("forgot-container"); hide("login-container");
+};
+
+function hide(id){ document.getElementById(id).style.display="none"; }
+function show(id){ document.getElementById(id).style.display="block"; }
+
+/* ---------------- LOGIN ---------------- */
+document.getElementById("login-btn").onclick = async () => {
+    const email = document.getElementById("login-email").value;
+    const pw = document.getElementById("login-password").value;
+
+    if(!email || !pw) return showToast("Fill all fields!");
+
+    const fd = new FormData();
+    fd.append("email", email);
+    fd.append("password", pw);
+
+    const res = await fetch("/login", { method:"POST", body:fd });
+
+    if (res.redirected) {
+        location.href = res.url;
+    } else {
+        showToast(await res.text());
+    }
+};
+
+/* ---------------- REGISTER ---------------- */
+document.getElementById("register-btn").onclick = async () => {
+    const u = document.getElementById("register-username").value;
+    const e = document.getElementById("register-email").value;
+    const p = document.getElementById("register-password").value;
+
+    if(!u || !e || !p) return showToast("Fill all fields!");
+
+    const fd = new FormData();
+    fd.append("username", u);
+    fd.append("email", e);
+    fd.append("password", p);
+
+    const res = await fetch("/send_otp", { method:"POST", body:fd });
+    const data = await res.json();
+
+    showToast(data.message);
+
+    if(data.success){
+        hide("register-container");
+        show("otp-section");
+    }
+};
+
+/* ---------------- VERIFY OTP (REGISTER) ---------------- */
+document.getElementById("verify-otp-btn").onclick = async () => {
+    const otp = document.getElementById("otp").value;
+
+    if(!otp) return showToast("Enter OTP!");
+
+    const fd = new FormData();
+    fd.append("otp", otp);
+
+    const res = await fetch("/verify_otp", { method:"POST", body:fd });
+    const data = await res.json();
+
+    showToast(data.message);
+
+    if(data.success){
+        location.href = data.redirect;
+    }
+};
+
+/* ---------------- FORGOT PASSWORD: SEND OTP ---------------- */
+document.getElementById("send-otp-btn").onclick = async () => {
+    const email = document.getElementById("forgot-email").value;
+
+    if(!email) return showToast("Enter email!");
+
+    const fd = new FormData();
+    fd.append("email", email);
+
+    const res = await fetch("/forget_password", { method:"POST", body:fd });
+    const data = await res.json();
+
+    showToast(data.message);
+
+    if(data.success){
+        show("reset-otp-section");
+    }
+};
+
+/* ---------------- RESET PASSWORD ---------------- */
+document.getElementById("reset-password-btn").onclick = async () => {
+    const otp = document.getElementById("reset-otp").value;
+    const newp = document.getElementById("new-password").value;
+
+    if(!otp || !newp) return showToast("Fill all fields!");
+
+    const fd = new FormData();
+    fd.append("otp", otp);
+    fd.append("new_password", newp);
+
+    const res = await fetch("/reset_password", { method:"POST", body:fd });
+    const data = await res.json();
+
+    showToast(data.message);
+
+    if(data.success){
+        hide("forgot-container");
+        show("login-container");
+    }
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,464 @@
+{% extends "formbase.html" %}
+{% block title %}Application Preview{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+/* PAGE + GLOBAL SIZES */
+:root { 
+  --page-width: 760px; 
+  --box-border: 1px solid #000; 
+}
+
+body { 
+  font-family: Inter, Helvetica, sans-serif; 
+  background: #fff; 
+  padding: 24px; 
+  margin:0; 
+  color:#111; 
+}
+
+.page { 
+  width: var(--page-width); 
+  max-width: 100%; 
+  margin: 0 auto; 
+  border: var(--box-border); 
+  padding: 20px; 
+  box-sizing: border-box; 
+  background:#fff;
+}
+
+.page .header {
+    background: none !important;
+    color: black;
+}
+
+.header-content {
+    background: none !important;
+}
+
+.header { 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  gap:12px; 
+}
+
+.school-logo { 
+  width:72px; 
+  height:72px; 
+  object-fit:cover; 
+  border-radius:6px; 
+}
+
+hr.sep { 
+  border: 2px solid #000; 
+  margin: 12px 0 14px; 
+}
+
+.form-title { 
+  text-align:center; 
+  font-size:18px; 
+  font-weight:600; 
+  margin:6px 0 12px;
+}
+
+/* C1 INPUT BOXES */
+.c1 { display:flex; width:100%; }
+.c1 .c1-box {
+  display:flex; align-items:center;
+  border: var(--box-border);
+  padding:4px 6px; width:100%; min-height:30px;
+  gap:4px; box-sizing:border-box;
+}
+.c1 .c1-label { font-weight:700; font-size:13px; white-space:nowrap; min-width:max-content; margin-right:2px; }
+.c1 .c1-value { flex:1; font-size:13px; padding-left:2px; word-break:break-word; }
+
+/* GRID LAYOUTS */
+.row-2, .row-4 { gap:8px; margin-top:8px; }
+.row-2 { display:grid; grid-template-columns:1fr 1fr; }
+.row-4 { display:grid; grid-template-columns:repeat(4,1fr); }
+
+/* NAME GRID */
+.name-photo { display:flex; gap:16px; margin-top:12px; }
+.name-col { flex:1; }
+.name-row { display:flex; gap:12px; align-items:center; margin-bottom:8px; }
+.name-label { font-weight:700; font-size:13px; width:auto; min-width:80px; }
+.name-grid { display:grid; grid-template-columns: repeat(18, 22px); grid-auto-rows: 22px; }
+.name-grid div { border:1px solid #000; display:flex; justify-content:center; align-items:center; font-size:12px; text-transform:uppercase; }
+
+/* PHOTO */
+.photo-box, .pphoto-box { width: 120px; height: 120px; border: 1px solid #000; padding: 6px; display: flex; justify-content: center; align-items: center; }
+.photo-box img, .pphoto-box img { width: 120px; height: 120px; object-fit: cover; }
+
+/* PHONE GRID */
+.phone-grid { display:grid; grid-template-columns: repeat(11, 20px); gap:4px; }
+.phone-grid div { border:1px solid #000; height:22px; display:flex; justify-content:center; align-items:center; font-size:12px; }
+
+/* PARENTS + ACADEMIC SECTIONS */
+.parent-grid, .acad-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+.parent-box, .acad-box { border:1px solid #000; padding:6px; }
+.parent-box label, .acad-box label { font-weight:700; display:block; font-size:13px; margin-bottom:4px; }
+.parent-line, .acad-line { border:1px solid #000; padding:6px; min-height:24px; background:#fff; font-size:13px; }
+
+/* PERMIT STUB */
+.stub-line { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.stub-label { font-weight: 700; font-size: 13px; white-space: nowrap; }
+.stub-grid-horizontal { display: grid; grid-template-columns: repeat(18, 24px); gap: 2px; }
+.permit-stub { border-top:3px dashed #000; margin-top:18px; padding-top:12px; }
+.stub-grid-horizontal div { border: 1px solid #000; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; font-size: 12px; text-transform: uppercase; }
+
+/* BUTTONS */
+.controls { display:flex; justify-content:center; gap:12px; margin-top:16px; }
+.btn { padding:8px 14px; border-radius:6px; font-weight:600; cursor:pointer; }
+.btn.print { background:#3a5fcf; color:#fff; }
+.btn.edit  { background:#fff; border:1px solid #2d4ea0; color:#2d4ea0; }
+.btn.final { background:#2d8a2d; color:#fff; }
+.notice { padding:8px 10px; background:#f3f7ff; color:#2d4ea0; border:1px solid #2d4ea0; border-radius:6px; font-weight:700; }
+
+@media print {
+    body, html { 
+        margin: 0; 
+        padding: 0; 
+        width: 210mm; 
+        height: 297mm; 
+        overflow: hidden; 
+        background: #fff;
+    }
+
+    body * { visibility: hidden; }       /* hide everything by default */
+    .page, .page * { visibility: visible; } /* show page content only */
+
+    .page {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;        /* full A4 width */
+        height: 297mm;       /* full A4 height */
+        padding: 0;          /* remove extra padding */
+        margin: 0;
+        border: none;
+        box-sizing: border-box;
+        font-size: 10px;     /* slightly smaller to fit */
+        overflow: hidden;
+    }
+
+    /* Hide permit stub */
+    .permit-stub { display: none; }
+
+    /* Header */
+    .school-logo { width:50px; height:50px; }
+    .form-title { font-size:14px; }
+
+    /* Name grid */
+    .name-grid div { width:16px; height:16px; font-size:9px; }
+
+    /* Photo */
+    .photo-box { width:100px; height:100px; }
+    .photo-box img { width:100px; height:100px; object-fit:cover; }
+
+    /* Phone grid */
+    .phone-grid div { width:16px; height:16px; font-size:9px; }
+
+    /* Parents & Academic */
+    .parent-box, .acad-box { padding:2px; font-size:9px; }
+    .parent-line, .acad-line { padding:2px; min-height:16px; font-size:9px; }
+
+    /* Reduce row spacing */
+    .row-2, .row-4, .parent-grid, .acad-grid { gap:2px; margin-top:2px; }
+
+    /* Hide buttons */
+    .controls { display: none; }
+
+    /* Prevent breaking inside sections */
+    .name-photo, .name-row, .row-2, .row-4, .parent-grid, .acad-grid, .photo-box { page-break-inside: avoid; }
+}
+
+
+</style>
+
+<div class="page" role="main">
+    <!-- HEADER -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/schoollogo.jpg') }}" class="school-logo" alt="logo">
+        <div style="text-align:center;">
+            <div style="font-weight:700;">PADRE GARCIA POLYTECHNIC COLLEGE</div>
+            <div style="font-size:13px;">Brgy. Castillo, Padre Garcia Batangas 4224</div>
+            <div style="font-size:13px;">padregarciapolytechniccollege@gmail.com</div>
+        </div>
+    </div>
+    <hr class="sep">
+    <div class="form-title">COLLEGE ADMISSION APPLICATION FORM</div>
+
+    <!-- program / doa -->
+    <div class="row-2">
+        <div class="c1">
+            <div class="c1-box">
+                <div class="c1-label">Program (Course)</div>
+                <div class="c1-value">{{ form.get('program','') }}</div>
+            </div>
+        </div>
+        <div class="c1">
+            <div class="c1-box">
+                <div class="c1-label">Date of Application</div>
+                <div class="c1-value">{{ form.get('doa','') }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERSONAL INFO + PHOTO -->
+    <div class="name-photo">
+        <div class="name-col">
+            {% for field, label in [('lastName','LAST NAME'), ('firstName','FIRST NAME'), ('middleName','MIDDLE NAME')] %}
+            <div class="name-row">
+                <div class="name-label">{{ label }}</div>
+                <div class="name-grid">
+                    {% set value = (form.get(field,'') or '')[:18] %}
+                    {% for i in range(18) %}
+                        <div>{{ value[i:i+1]|upper if value|length > i else '' }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% set photo_filename = (documents or {}).get('photo') %}
+
+<div class="photo-box">
+   {% if photo_filename %}
+      <img src="{{ url_for('uploaded_file', filepath=photo_filename) }}">
+   {% else %}
+      <img src="{{ url_for('static', filename='images/picture.png') }}">
+   {% endif %}
+</div>
+
+    </div>
+
+    <!-- DOB / POB -->
+    <div class="row-2">
+        <div class="c1"><div class="c1-box"><div class="c1-label">Date of Birth</div><div class="c1-value">{{ form.get('dob','') }}</div></div></div>
+        <div class="c1"><div class="c1-box"><div class="c1-label">Place of Birth</div><div class="c1-value">{{ form.get('pob','') }}</div></div></div>
+    </div>
+
+    <!-- SEX / STATUS / NATIONALITY / RELIGION -->
+    <div class="row-4" style="margin-top:10px;">
+        {% for field, label in [('gender','Sex'), ('civil_status','Civil Status'), ('nationality','Nationality'), ('religion','Religion')] %}
+        <div class="c1"><div class="c1-box"><div class="c1-label">{{ label }}</div><div class="c1-value">{{ form.get(field,'') }}</div></div></div>
+        {% endfor %}
+    </div>
+
+    <!-- ADDRESS -->
+    <div class="row-2" style="margin-top:10px;">
+        <div class="c1">
+            <div class="c1-box">
+                <div class="c1-label">Home Address</div>
+                <div class="c1-value">
+                    {{ form.get('street','') }}{% if form.get('barangay') %}, {{ form.get('barangay') }}{% endif %}{% if form.get('city') %}, {{ form.get('city') }}{% endif %}{% if form.get('province') %}, {{ form.get('province') }}{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="c1">
+            <div class="c1-box"><div class="c1-label">Postal Code</div><div class="c1-value">{{ form.get('zipcode','') }}</div></div>
+        </div>
+    </div>
+
+    <!-- PHONE / EMAIL -->
+    <div style="margin-top:10px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:120px; font-weight:700;">PHONE NO.</div>
+            <div class="phone-grid">
+                {% set phone = (form.get('studphone','') or '')[:11] %}
+                {% for i in range(11) %}<div>{{ phone[i:i+1] if phone|length>i else '' }}</div>{% endfor %}
+            </div>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:8px; align-items:center;">
+            <div style="width:120px; font-weight:700;">EMAIL</div>
+            <div style="flex:1; border:1px solid #000; padding:8px;">{{ form.get('email','') }}</div>
+        </div>
+    </div>
+
+     <div class="parent-grid">
+      <div class="parent-box">
+        <label>Father’s Name</label>
+        <div class="parent-line">{{ form.get('fatherName','') }}</div>
+        <label>Occupation</label>
+        <div class="parent-line">{{ form.get('fatherOccupation','') }}</div>
+        <label>Address</label>
+        <div class="parent-line">{{ form.get('fatherAddress','') }}</div>
+        <label>Contact</label>
+        <div class="parent-line">{{ form.get('fatherPhone','') }}</div>
+      </div>
+
+      <div class="parent-box">
+        <label>Mother’s Maiden Name</label>
+        <div class="parent-line">{{ form.get('motherName','') }}</div>
+        <label>Occupation</label>
+        <div class="parent-line">{{ form.get('motherOccupation','') }}</div>
+        <label>Address</label>
+        <div class="parent-line">{{ form.get('motherAddress','') }}</div>
+        <label>Contact</label>
+        <div class="parent-line">{{ form.get('motherPhone','') }}</div>
+      </div>
+
+      <div class="parent-box">
+        <label>Guardian</label>
+        <div class="parent-line">{{ form.get('guardianName','') }}</div>
+        <label>Occupation</label>
+        <div class="parent-line">{{ form.get('guardianOccupation','') }}</div>
+        <label>Address</label>
+        <div class="parent-line">{{ form.get('guardianAddress','') }}</div>
+        <label>Contact</label>
+        <div class="parent-line">{{ form.get('guardianPhone','') }}</div>
+      </div>
+    </div>
+
+    <div style="margin-top:10px; display:flex; gap:12px; align-items:center;">
+      <div style="width:120px; font-weight:700;">Monthly Income</div>
+      <div style="flex:1; border:1px solid #000; padding:8px;">{{ form.get('income','') }}</div>
+    </div>
+
+    <!-- academic -->
+<!--     <h4 style="margin-top:12px; margin-bottom:6px; font-size:15px; font-weight:700;">Academic Background</h4>
+ -->
+    <div class="acad-grid">
+      <div class="acad-box">
+        <label>Senior High School Strand</label>
+        <div class="acad-line">{{ form.get('strand','') }}</div>
+        <label>SHS Name</label>
+        <div class="acad-line">{{ form.get('shsName','') }}</div>
+        <label>SHS Address</label>
+        <div class="acad-line">{{ form.get('shsAddress','') }}</div>
+        <label>Inclusive Dates</label>
+        <div class="acad-line">{{ form.get('inclusiveDates','') }}</div>
+      </div>
+
+      <div class="acad-box">
+        <label>College / ALS (if any)</label>
+        <div class="acad-line">{{ form.get('cAls','') }}</div>
+        <label>School Name</label>
+        <div class="acad-line">{{ form.get('cschoolName','') }}</div>
+        <label>Address</label>
+        <div class="acad-line">{{ form.get('cschoolAddress','') }}</div>
+        <label>Inclusive Dates</label>
+        <div class="acad-line">{{ form.get('cinclusivedates','') }}</div>
+        <label>Program</label>
+        <div class="acad-line">{{ form.get('cprogram','') }}</div>
+      </div>
+      <div class="acad-box">
+    <label>Member of Cultural Minority Group?</label>
+    <div class="acad-line">
+        No {% if form.get('culturalMinority') == 'No' %}✔️{% endif %}
+        &nbsp;&nbsp;
+        Yes {% if form.get('culturalMinority') == 'Yes' %}✔️{% endif %}
+    </div>
+
+    <label style="margin-top:6px;">Any physical disability or condition requiring special attention?</label>
+    <div class="acad-line">
+        No {% if form.get('disability') == 'No' %}✔️{% endif %}
+        &nbsp;&nbsp;
+        Yes {% if form.get('disability') == 'Yes' %}✔️{% endif %}
+    </div>
+
+    {% if form.get('disability_details') %}
+    <label style="margin-top:6px;">(Specify – disability certificate attached)</label>
+    <div class="acad-line">{{ form.get('disability_details','') }}</div>
+    {% endif %}
+</div>
+    </div>
+
+     <div class="permit-stub">
+
+  <h4 style="margin:0 0 8px 0; text-align:center; font-weight:700;">
+    COLLEGE ADMISSION TEST PERMIT STUB
+  </h4>
+
+  <!-- Exam Info -->
+  <div style="margin-top:10px; font-size:14px;">
+    <strong>Control No:</strong> {{ app_id }} <br>
+    <strong>Date of Examination:</strong> {{ exam_date or "________________" }}
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <strong>Time:</strong> {{ exam_time or "________________" }}
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <strong>Testing Rm:</strong> {{ exam_room or "________________" }}
+  </div>
+
+  <div class="permit-body" style="display:flex; gap:25px; margin-top:20px;">
+
+    <div style="flex:1;">
+      <!-- LAST NAME -->
+<div class="stub-line">
+  <div class="stub-label">LAST NAME:</div>
+  <div class="stub-grid-horizontal">
+    {% set ln = (form.get('lastName','') or '')[:18] %}
+    {% for i in range(18) %}
+      <div>{{ ln[i:i+1]|upper if ln|length > i else '' }}</div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="stub-line">
+  <div class="stub-label">FIRST NAME:</div>
+  <div class="stub-grid-horizontal">
+    {% set ln = (form.get('firstName','') or '')[:18] %}
+    {% for i in range(18) %}
+      <div>{{ ln[i:i+1]|upper if ln|length > i else '' }}</div>
+    {% endfor %}
+  </div>
+</div>
+<div class="stub-line">
+  <div class="stub-label">MIDDLE NAME:</div>
+  <div class="stub-grid-horizontal">
+    {% set ln = (form.get('middleName','') or '')[:18] %}
+    {% for i in range(18) %}
+      <div>{{ ln[i:i+1]|upper if ln|length > i else '' }}</div>
+    {% endfor %}
+  </div>
+</div>
+
+
+    </div>
+
+    <!-- PHOTO -->
+   <div class="pphoto-box" style=" border:1px solid #000; overflow:hidden;">
+   {% if photo_filename %}
+<img src="{{ url_for('uploaded_file', filepath=photo_filename) }}">
+{% else %}
+<img src="{{ url_for('static', filename='images/picture.png') }}">
+{% endif %}
+</div>
+
+  </div>
+
+  <!-- OFFICER SIGN -->
+  <div style="text-align:center; margin-top:20px;">
+    <div>______________________________</div>
+    <div>Admission and Testing Officer</div>
+  </div>
+
+</div>
+
+    <!-- controls -->
+    <div class="controls" role="region" aria-label="actions">
+     {% if not submitted or admin_mode %}
+        <a href="{{ url_for('form_page') }}?app_id={{ app_id|urlencode }}">
+          <button class="btn edit" type="button">Edit</button>
+        </a>
+
+        <form method="POST" action="{{ url_for('final_submit', app_id=app_id) }}" onsubmit="return confirm('Are you sure you want to final submit? This will lock the application.')">
+          <button class="btn final" type="submit">Final Submit</button>
+        </form>
+      {% else %}
+        <div class="notice">This application has been submitted and is read-only.</div>
+        <a href="{{ url_for('success_page', app_id=app_id) }}">
+          <button class="btn edit" type="button">View Submission</button>
+        </a>
+      {% endif %}
+
+      <button class="btn print" type="button" onclick="window.print()">Print</button>
+    </div>
+
+    <div style="text-align:center; margin-top:14px; font-weight:700; color:#2d4ea0;">“TAGA-PGPC AKO: MATALINO, DISIPLINADO, MABUTING TAO, IPINAGMAMALAKI KO!”</div>
+</div>
+{% endblock %}
+
+

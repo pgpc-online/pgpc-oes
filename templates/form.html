@@ -1,0 +1,620 @@
+{% extends "formbase.html" %}
+{% block title %}College Admission Application{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+
+<style>
+
+/* ------------------ GLOBAL ------------------ */
+
+body {
+    font-family: Inter, sans-serif;
+    background-color: #f6f6f6;
+}
+
+/* Wrapper & Card */
+.form-wrapper {
+    max-width: 900px;
+    margin: auto;
+    
+}
+
+.form-card {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* ------------------ HEADER ------------------ */
+
+.form-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.ay {
+    text-align: center;
+    font-size: 16px;
+    color: #555;
+}
+
+/* ------------------ PROGRAM + PHOTO ------------------ */
+
+.form-header {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+#program,
+.form-header input[type="date"] {
+    width: 100%;
+    height: 35px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* PHOTO UPLOAD BOX */
+.photo-upload {
+    border: 2px dashed #aaa;
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #fafafa;
+    width: 225px;
+    height: 260px;
+    margin: 0 auto;
+}
+
+#photo-preview {
+    width: 230px;
+    height: 210px;
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+.photo-upload input[type="file"] {
+    width: 230px;
+    margin-top: 8px;
+}
+
+/* ------------------ GRID FIELDS ------------------ */
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 25px 30px;
+}
+.form-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px 30px;
+}
+.form-grid input,
+.form-grid select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+.form-grid-3 input,
+.form-grid-3 select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+/* ------------------ RADIO BUTTON ------------------ */
+
+.radio-group {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.radio-group input[type="radio"] {
+    width: auto;       /* prevents all inputs from shrinking */
+    margin-right: 6px;
+}
+
+/* ------------------ ADDRESS ------------------ */
+
+.address-form .form-row,
+.address-form1 .form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.street-address input, .details {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* ------------------ SECTION HEADERS ------------------ */
+
+h4 {
+    margin-top: 6px;
+    color: #333;
+    font-size: 20px;
+}
+
+h5 {
+    font-size: 15px;
+    color: #555;
+}
+
+/* ------------------ CONSENT BOX ------------------ */
+
+.consent {
+    background-color: #e0dede;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.consent p {
+    line-height: 1.5;
+}
+
+/* ------------------ LABELS ------------------ */
+
+label {
+    display: block;
+    margin: 8px 0 4px;
+    font-weight: bold;
+}
+
+/* ------------------ BUTTON ------------------ */
+
+.submit-btn {
+    display: block;
+    margin: 30px auto 0;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    background-color: #3a5fcf;
+    color: white;
+    transition: 0.2s ease;
+}
+
+.submit-btn:hover {
+    background-color: #2f4db0;
+}
+</style>
+
+
+<!-- ---------------- FORM START ---------------- -->
+
+<div class="form-wrapper">
+
+<h3 class="form-title">College Admission Application Form</h3>
+<p class="ay">A.Y xxxx - xxxx</p>
+
+<form id="admission-form"
+      enctype="multipart/form-data"
+      method="POST"
+      action="/form">
+
+    <!-- Hidden app_id for DB updating -->
+    <input type="hidden" name="app_id" value="{{ app_id or '' }}">
+
+    <div class="form-card">
+
+        <!-- PROGRAM + PHOTO -->
+        <div class="form-header">
+            <div>
+                <label for="program">PROGRAM (COURSE):</label>
+<select id="program" name="program" required>
+    <option value="">Select your program</option>
+
+    <option value="BSCS"
+        {% if form.get("program") == "BSCS" %}selected{% endif %}
+    >Bachelor of Science in Computer Science</option>
+
+    <option value="BSCrim"
+        {% if form.get("program") == "BSCrim" %}selected{% endif %}
+    >Bachelor of Science in Criminology</option>
+
+    <option value="BPA"
+        {% if form.get("program") == "BPA" %}selected{% endif %}
+    >Bachelor of Public Administration</option>
+
+    <option value="BSMA"
+        {% if form.get("program") == "BSMA" %}selected{% endif %}
+    >Bachelor of Management Accounting</option>
+</select>
+
+
+                <label>Date of Application:</label>
+                <input type="date" name="doa" value="{{ form.get('doa','') }}" required>
+            </div>
+
+            <!-- PHOTO -->
+            <div class="photo-upload">
+{% set photo = (documents or {}).get('photo') %}
+<img id="photo-preview"
+   src="{% if photo %}{{ url_for('uploaded_file', filepath=photo) }}{% else %}{{ url_for('static', filename='images/picture.png') }}{% endif %}">
+                <input type="file" id="photo" name="photo" accept="image/*" required>
+            </div>
+        </div>
+
+        <!-- PERSONAL INFORMATION -->
+        <hr>
+        <h4>Personal Information</h4>
+        <h5>Please provide your basic personal details.</h5>
+
+        <div class="form-grid">
+
+            <!-- LEFT -->
+            <div>
+                <label>Last Name *</label>
+                <input type="text" name="lastName" required value="{{ form.get('lastName','') }}">
+
+                <label>First Name *</label>
+                <input type="text" name="firstName" required value="{{ form.get('firstName','') }}">
+
+                <label>Middle Name</label>
+                <input type="text" name="middleName" value="{{ form.get('middleName','') }}">
+
+                <label>Date of Birth *</label>
+                <input type="date" name="dob" required value="{{ form.get('dob','') }}">
+
+                <label>Place of Birth *</label>
+                <input type="text" name="pob" required value="{{ form.get('pob','') }}">
+
+                <label>Email *</label>
+                <input type="email" name="email" required value="{{ form.get('email','') }}">
+
+                <!-- ADDRESS -->
+                <div class="address-form">
+                    <div class="form-row">
+                        <div class="col">
+                            <label>Province</label>
+                            <select id="province" name="province" required>
+                                <option value="">Select Province</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>City/Municipality</label>
+                            <select id="city" name="city" required>
+                                <option value="">Select City</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div>
+
+                <label>Gender *</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="gender" value="Male"
+                        {% if form.get('gender') == 'Male' %}checked{% endif %}> Male</label>
+                    <label><input type="radio" name="gender" value="Female"
+                        {% if form.get('gender') == 'Female' %}checked{% endif %}> Female</label>
+                </div>
+
+                <label>Religion *</label>
+                <input type="text" name="religion" required value="{{ form.get('religion','') }}">
+
+                <label>Nationality *</label>
+                <input type="text" name="nationality" required value="{{ form.get('nationality','') }}">
+
+                <label>Civil Status *</label>
+                <select name="civil_status" required>
+                    <option value="">Select Civil Status</option>
+                    {% for c in ['Single','Married','Widowed','Separated','Annulled'] %}
+                        <option value="{{ c }}" {% if form.get('civil_status') == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Phone Number *</label>
+                <input type="tel"
+       name="studphone"
+       required
+       pattern="09[0-9]{9}"
+       maxlength="11"
+       title="Phone number must start with 09 and contain 11 digits"
+       placeholder="09XXXXXXXXX"
+       value="{{ form.get('studphone','') }}">
+
+
+                <!-- BARANGAY + ZIP -->
+                <div class="address-form1">
+                    <div class="form-row">
+                        <div class="col">
+                            <label>Barangay</label>
+                            <select id="barangay" name="barangay" required>
+                                <option value="">Select Barangay</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label>Zip Code</label>
+                            <input type="text" name="zipcode" value="{{ form.get('zipcode','') }}">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- STREET -->
+        <div class="street-address">
+            <label>Street Address *</label>
+            <input type="text" name="street" required value="{{ form.get('street','') }}">
+        </div>
+
+        <hr>
+
+        <!-- PARENTS -->
+        <h4>Parent/Guardian Information</h4>
+        <div class="form-grid-3">
+
+            <div>
+                <label>Father's Full Name *</label>
+                <input type="text" name="fatherName" required value="{{ form.get('fatherName','') }}">
+
+                <label>Occupation *</label>
+                <input type="text" name="fatherOccupation" required value="{{ form.get('fatherOccupation','') }}">
+
+                <label>Address *</label>
+                <input type="text" name="fatherAddress" required value="{{ form.get('fatherAddress','') }}">
+
+                <label>Phone *</label>
+                <input type="tel" name="fatherPhone"  pattern="09[0-9]{9}"
+       maxlength="11" required value="{{ form.get('fatherPhone','') }}">
+            </div>
+
+            <div>
+                <label>Mother's Maiden Name *</label>
+                <input type="text" name="motherName" required value="{{ form.get('motherName','') }}">
+
+                <label>Occupation *</label>
+                <input type="text" name="motherOccupation" required value="{{ form.get('motherOccupation','') }}">
+
+                <label>Address *</label>
+                <input type="text" name="motherAddress" required value="{{ form.get('motherAddress','') }}">
+
+                <label>Phone *</label>
+                <input type="tel" name="motherPhone"  pattern="09[0-9]{9}"
+       maxlength="11" required value="{{ form.get('motherPhone','') }}">
+            </div>
+        <!-- GUARDIAN (OPTIONAL) -->
+
+    <div>
+        <label>Guardian's Full Name</label>
+        <input type="text" name="guardianName" value="{{ form.get('guardianName','') }}">
+
+        <label>Occupation</label>
+        <input type="text" name="guardianOccupation" value="{{ form.get('guardianOccupation','') }}">
+    
+
+    
+        <label>Address</label>
+        <input type="text" name="guardianAddress" value="{{ form.get('guardianAddress','') }}">
+
+        <label>Phone</label>
+        <input type="tel" name="guardianPhone"  pattern="09[0-9]{9}"
+       maxlength="11" value="{{ form.get('guardianPhone','') }}">
+    </div>
+
+</div>
+
+
+        <hr>
+
+        <!-- INCOME -->
+        <h4>Average Family Income</h4>
+        <div class="radio-group">
+            {% set income = form.get('income') %}
+            <label><input type="radio" name="income" value="below-10000"
+                {% if income == "below-10000" %}checked{% endif %}> ₱10,000 and below</label>
+            <label><input type="radio" name="income" value="20001-30000"
+                {% if income == "20001-30000" %}checked{% endif %}> ₱20,001 - ₱30,000</label>
+            <label><input type="radio" name="income" value="30001-40000"
+                {% if income == "30001-40000" %}checked{% endif %}> ₱30,001 - ₱40,000</label>
+        </div>
+        <div class="radio-group">
+            <label><input type="radio" name="income" value="40001-50000"
+                {% if income == "40001-50000" %}checked{% endif %}> ₱40,001 - ₱50,000</label>
+            <label><input type="radio" name="income" value="50001-100000"
+                {% if income == "50001-100000" %}checked{% endif %}> ₱50,001 - ₱100,000</label>
+            <label><input type="radio" name="income" value="above-100001"
+                {% if income == "above-100001" %}checked{% endif %}> ₱100,000 above</label>
+        </div>
+
+
+        <hr>
+
+        <!-- ACADEMIC -->
+        <h4>Academic Background</h4>
+        <div class="form-grid">
+
+            <div>
+                <label>Senior High School Strand *</label>
+                <input type="text" name="strand" required value="{{ form.get('strand','') }}">
+
+                <label>Senior High School Name *</label>
+                <input type="text" name="shsName" required value="{{ form.get('shsName','') }}">
+
+                <label>School Address *</label>
+                <input type="text" name="shsAddress" required value="{{ form.get('shsAddress','') }}">
+
+                <label>Inclusive Dates *</label>
+                <input type="text" name="inclusiveDates" required value="{{ form.get('inclusiveDates','') }}">
+            </div>
+
+            <div>
+                <label>College / ALS (optional)</label>
+                <input type="text" name="cAls" value="{{ form.get('cAls','') }}">
+
+                <label>School Name</label>
+                <input type="text" name="cschoolName" value="{{ form.get('cschoolName','') }}">
+
+                <label>School Address</label>
+                <input type="text" name="cschoolAddress" value="{{ form.get('cschoolAddress','') }}">
+
+                <label>Inclusive Dates</label>
+                <input type="text" name="cinclusivedates" value="{{ form.get('cinclusivedates','') }}">
+
+                <label>Program</label>
+                <input type="text" name="cprogram" value="{{ form.get('cprogram','') }}">
+            </div>
+
+        </div>
+<hr>
+<h4>Additional Information</h4>
+
+<label>Member of Cultural Minority Group?</label>
+<div class="radio-group">
+    <label><input type="radio" name="culturalMinority" value="No"
+        {% if form.get('culturalMinority') == 'No' %}checked{% endif %}> No</label>
+    <label><input type="radio" name="culturalMinority" value="Yes"
+        {% if form.get('culturalMinority') == 'Yes' %}checked{% endif %}> Yes</label>
+</div>
+
+<label>Do you have any physical disability or condition that requires special attention?</label>
+<div class="radio-group">
+    <label><input type="radio" name="disability" value="No"
+        {% if form.get('disability') == 'No' %}checked{% endif %}> No</label>
+    <label><input type="radio" name="disability" value="Yes"
+        {% if form.get('disability') == 'Yes' %}checked{% endif %}> Yes</label>
+</div>
+
+<label>If Yes, please specify:</label>
+<input class="details" type="text" name="disabilityDetails" value="{{ form.get('disabilityDetails','') }}" >
+        <hr>
+
+        <!-- CONSENT -->
+        <div class="consent">
+            <h4>CONSENT</h4>
+            <p>
+                <input type="checkbox" name="consent" {% if form.get('consent') %}checked{% endif %} required>
+                     I am fully aware that Padre Garcia Polytechnic College is obligated under the Data Privacy Act of 2012  and its Implementing Rules and Regulations (IRR) effective since September 8, 2016, to protect all my personal and sensitive information that it collects, processes, and retains upon my application for admission, enrollment, and during my stay in the College. Likewise, I am fully aware that PGPC may share such information to affiliated or partner organizations as part of its contractual obligations, or with government agencies pursuant to law or legal processes. In this regard, I hereby allow PGPC to collect, process, use and share my personal data in the pursuit of its legitimate academic, research and employment purposes and/or interests as an educational institution.
+            </p>
+
+            <h4>OATH</h4>
+            <p>
+                <input type="checkbox" name="oath" {% if form.get('oath') %}checked{% endif %} required>
+  I hereby certify that all information supplied in this application form is complete and accurate. I also understand that any false information will disqualify me from being admitted to the College.
+            </p>
+        </div>
+
+    </div>
+
+    <button type="submit" class="submit-btn">NEXT</button>
+
+</form>
+
+</div> 
+<script>
+document.getElementById("photo").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+    document.getElementById("photo-preview").src = URL.createObjectURL(file);
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const province = document.getElementById("province");
+    const city = document.getElementById("city");
+    const barangay = document.getElementById("barangay");
+
+    const savedProvince = "{{ form.get('province','') }}";
+    const savedCity = "{{ form.get('city','') }}";
+    const savedBarangay = "{{ form.get('barangay','') }}";
+
+    let provinces = [], cities = [], barangays = [];
+
+    // Load Provinces
+    fetch("https://psgc.gitlab.io/api/provinces.json")
+      .then(r => r.json())
+      .then(data => {
+        provinces = data.sort((a,b)=>a.name.localeCompare(b.name));
+
+        provinces.forEach(p => {
+            const opt = new Option(p.name, p.name);  
+            if (p.name === savedProvince) opt.selected = true;
+            province.add(opt);
+        });
+
+        if (savedProvince) loadCities(savedProvince);
+      });
+
+    // Load Cities
+    fetch("https://psgc.gitlab.io/api/cities-municipalities.json")
+      .then(r => r.json())
+      .then(data => cities = data);
+
+    // Load Barangays
+    fetch("https://psgc.gitlab.io/api/barangays.json")
+      .then(r => r.json())
+      .then(data => barangays = data);
+
+    function loadCities(provinceName) {
+        const prov = provinces.find(p => p.name === provinceName);
+        if (!prov) return;
+
+        city.innerHTML = '<option value="">Select City</option>';
+        barangay.innerHTML = '<option value="">Select Barangay</option>';
+
+        const cityList = cities
+            .filter(c => c.provinceCode === prov.code)
+            .sort((a,b)=>a.name.localeCompare(b.name));
+
+        cityList.forEach(c => {
+            const opt = new Option(c.name, c.name);
+            if (c.name === savedCity) opt.selected = true;
+            city.add(opt);
+        });
+
+        if (savedCity) loadBarangays(cityList, savedCity);
+    }
+
+    function loadBarangays(cityList, cityName) {
+        const cityMatch = cityList.find(c => c.name === cityName);
+        if (!cityMatch) return;
+
+        barangay.innerHTML = '<option value="">Select Barangay</option>';
+
+        const brgyList = barangays
+            .filter(b => b.cityCode === cityMatch.code || b.municipalityCode === cityMatch.code)
+            .sort((a,b)=>a.name.localeCompare(b.name));
+
+        brgyList.forEach(b => {
+            const opt = new Option(b.name, b.name);
+            if (b.name === savedBarangay) opt.selected = true;
+            barangay.add(opt);
+        });
+    }
+
+    // Province Change
+    province.addEventListener("change", () => {
+        loadCities(province.value);
+    });
+
+    // City Change
+    city.addEventListener("change", () => {
+        const prov = provinces.find(p => p.name === province.value);
+        if (!prov) return;
+
+        const cityList = cities.filter(c => c.provinceCode === prov.code);
+        loadBarangays(cityList, city.value);
+    });
+
+});
+</script>
+
+{% endblock %}

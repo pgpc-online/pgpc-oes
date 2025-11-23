@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    background: #f0f2f5;
+    font-family: 'Inter', sans-serif;
+}
+
+.chat-container {
+    max-width: 850px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.header {
+    background: #2d4ea0;
+    padding: 16px 24px;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.messages-box {
+    height: 480px;
+    overflow-y: auto;
+    padding: 20px;
+    background: #eef1f6;
+}
+
+.msg {
+    margin-bottom: 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    max-width: 65%;
+    position: relative;
+    font-size: 14px;
+}
+
+.msg.student {
+    background: #2d4ea0;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 0;
+}
+
+.msg.admin {
+    background: #ffffff;
+    border: 1px solid #d7d7d7;
+    margin-right: auto;
+    border-bottom-left-radius: 0;
+}
+
+.time {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+}
+
+.input-area {
+    display: flex;
+    padding: 18px;
+    background: white;
+    border-top: 1px solid #ddd;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.input-area button {
+    background: #2d4ea0;
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="header">
+        Message Admin
+    </div>
+
+    <div id="messages" class="messages-box"></div>
+
+    <div class="input-area">
+        <input type="text" id="msgBox" placeholder="Type your message…">
+        <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+
+</div>
+
+<script>
+let app_id = "{{ app_id }}";
+
+function loadMessages() {
+    fetch(`/api/messages/${app_id}`)
+        .then(res => res.json())
+        .then(data => {
+            let box = document.getElementById("messages");
+            box.innerHTML = "";
+
+            data.forEach(m => {
+                let div = document.createElement("div");
+                div.classList.add("msg");
+                div.classList.add(m.sender === "student" ? "student" : "admin");
+
+                div.innerHTML = `
+                    ${m.message}
+                    <div class="time">${m.created_at.replace("T"," ").slice(0,16)}</div>
+                `;
+
+                box.appendChild(div);
+            });
+
+            box.scrollTop = box.scrollHeight;
+        });
+}
+
+function sendMessage() {
+    let text = document.getElementById("msgBox").value;
+    if (!text.trim()) return;
+
+    fetch("/api/messages/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({
+            app_id: app_id,
+            message: text,
+            sender: "student"
+        })
+    }).then(r => r.json()).then(() => {
+        document.getElementById("msgBox").value = "";
+        loadMessages();
+    });
+}
+
+setInterval(loadMessages, 1000);
+loadMessages();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,285 @@
+{% extends "adminbase.html" %}
+{% block content %}
+
+<style>
+/* ---------------- GLOBAL ------------------- */
+.page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1a237e;
+    margin-bottom: 25px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ---------------- FILTER BAR ------------------- */
+.filter-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-input,
+.filter-select {
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #cfd3e0;
+    border-radius: 8px;
+    font-size: 14px;
+    min-width: 180px;
+}
+
+.btn-search {
+    background: #1a237e;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-search:hover {
+    background: #0c1657;
+}
+
+/* ---------------- TABLE ------------------- */
+.table-wrapper {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    font-family: 'Inter', sans-serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #1a237e;
+    color: white;
+}
+
+th {
+    padding: 14px 10px;
+    text-align: left;
+    font-size: 14px;
+    letter-spacing: .5px;
+}
+
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+/* ---------------- STATUS BADGES ------------------- */
+.badge {
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.badge-gray   { background: #9e9e9e; }
+.badge-green  { background: #2e7d32; }
+.badge-red    { background: #d32f2f; }
+.badge-blue   { background: #1976d2; }
+.badge-purple { background: #5e35b1; }
+/* ---------------- ACTION BUTTONS ------------------- */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-view, .btn-msg {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.btn-view { background: #3f51b5; }
+.btn-msg  { background: #0288d1; }
+
+/* --- KEBAB MENU --- */
+.action-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    min-width: 160px;
+    z-index: 10;
+    padding: 4px 0;
+}
+
+.menu-dropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.menu-dropdown button:hover {
+    background: #f3f4f6;
+}
+
+</style>
+
+<h2 class="page-title">Manage Students</h2>
+
+<!-- ================= FILTER & SEARCH ================= -->
+<form method="GET" class="filter-bar">
+
+    <input type="text" name="search" placeholder="Search student..."
+           value="{{ search_query }}" class="filter-input">
+
+    <select name="course" class="filter-select" onchange="this.form.submit()">
+    <option value="">All Courses</option>
+
+    <option value="BSCS"   {% if course_filter == "BSCS" %}selected{% endif %}>BSCS</option>
+    <option value="BSCrim" {% if course_filter == "BSCrim" %}selected{% endif %}>BSCrim</option>
+    <option value="BSMA"   {% if course_filter == "BSMA" %}selected{% endif %}>BSMA</option>
+    <option value="BPA"    {% if course_filter == "BPA" %}selected{% endif %}>BPA</option>
+</select>
+
+    <select name="sort" class="filter-select" onchange="this.form.submit()">
+    <option value="new" {% if sort_by == "new" %}selected{% endif %}>Newest First</option>
+    <option value="old" {% if sort_by == "old" %}selected{% endif %}>Oldest First</option>
+    <option value="az"  {% if sort_by == "az" %}selected{% endif %}>A → Z</option>
+    <option value="za"  {% if sort_by == "za" %}selected{% endif %}>Z → A</option>
+</select>
+
+    <button type="submit" class="btn-search">Apply</button>
+</form>
+
+
+<!-- ================= STUDENT TABLE ================= -->
+<div class="table-wrapper">
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>App ID</th>
+            <th>Email</th>
+            <th>Course</th>
+            <th>Date Applied</th>
+            <th>Status</th>
+            <th style="width:150px;">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for s in students %}
+        <tr>
+            <td>{{ s.firstName }} {{ s.lastName }}</td>
+            <td>{{ s.app_id }}</td>
+            <td>{{ s.email }}</td>
+            <td>{{ s.program }}</td>
+            <td>{{ s.created_at or "-" }}</td>
+
+            <td>
+    {% if s.status == "Submitted" %}
+        <span class="badge badge-gray">Submitted</span>
+    {% elif s.status == "Approved" %}
+        <span class="badge badge-green">Approved</span>
+    {% elif s.status == "Rejected" %}
+        <span class="badge badge-red">Rejected</span>
+    {% elif s.status == "Exam_taken" %}
+        <span class="badge badge-blue">Exam Taken</span>
+    {% elif s.status == "Enrolled" %}
+        <span class="badge badge-purple">Enrolled</span>
+    {% endif %}
+</td>
+
+            <td class="actions">
+
+    <!-- View -->
+    <a class="btn btn-view" title="View Application"
+       href="{{ url_for('admin_preview', app_id=s.app_id) }}">
+        <i class="fa-solid fa-eye"></i>
+    </a>
+    
+    
+    <!-- Message -->
+    <a class="btn btn-msg" title="Message Student"
+       href="{{ url_for('admin_messages', app_id=s.app_id) }}">
+        <i class="fa-solid fa-envelope"></i>
+    </a>
+
+    <!-- Kebab Menu -->
+    <div class="action-menu">
+        <button class="menu-btn">⋮</button>
+
+        <div class="menu-dropdown">
+
+            <form method="POST" action="{{ url_for('admin_approve', app_id=s.app_id) }}">
+                <button type="submit"> Approve </button>
+            </form>
+
+            <form method="POST" action="{{ url_for('admin_reject', app_id=s.app_id) }}">
+                <button type="submit"> Reject</button>
+            </form>
+
+            <form method="POST" action="{{ url_for('admin_enroll', app_id=s.app_id) }}">
+                <button type="submit"> Enroll</button>
+            </form>
+
+            <form method="POST" 
+                  action="{{ url_for('admin_delete_student', student_id=s.id) }}"
+                  onsubmit="return confirm('Delete this student?');">
+                <button type="submit">🗑 Delete</button>
+            </form>
+
+        </div>
+    </div>
+
+</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<script>
+document.addEventListener("click", function(event) {
+
+    // Close all menus first
+    document.querySelectorAll(".menu-dropdown").forEach(menu => {
+        menu.style.display = "none";
+    });
+
+    // If kebab clicked
+    if (event.target.classList.contains("menu-btn")) {
+        let dropdown = event.target.nextElementSibling;
+        dropdown.style.display = "block";
+        event.stopPropagation();
+    }
+});
+</script>
+{% endblock %}
+
