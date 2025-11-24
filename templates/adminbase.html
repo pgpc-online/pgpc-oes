@@ -101,6 +101,151 @@
     70%  { opacity: 1; }
     100% { opacity: 0; display: none; }
 }
+.dark-mode {
+    background-color: #0e141f !important;
+    color: #d7e7ff !important;
+}
+
+/* Cards, tables, modal */
+.dark-mode .table-wrapper,
+.dark-mode .card,
+.dark-mode table,
+.dark-mode .modal-content,
+.dark-mode .settings-card {
+    background: #16212f !important;
+    color: #d7e7ff !important;
+    border-color: #243245 !important;
+}
+
+/* Sidebar */
+.dark-mode .sidebar {
+    background-color: #0c1624 !important;
+}
+
+.dark-mode .sidebar a {
+    color: #d0e1ff !important;
+}
+
+.dark-mode .sidebar a.active,
+.dark-mode .sidebar a:hover {
+    background: rgba(90,144,255,0.25) !important;
+}
+
+/* ===========================
+   TEXT COLORS / TITLES
+   =========================== */
+.dark-mode .page-title {
+    color: #6fb3ff !important;  /* neon blue highlight */
+}
+
+/* ===========================
+   INPUTS
+   =========================== */
+.dark-mode input,
+.dark-mode select,
+.dark-mode textarea {
+    background: #1b2738 !important;
+    color: #d7e7ff !important;
+    border-color: #2f425d !important;
+}
+
+/* Search bars, filters */
+.dark-mode .filter-input,
+.dark-mode .filter-select,
+.dark-mode .search-input {
+    background: #1b2738 !important;
+    color: #d7e7ff !important;
+    border-color: #2f425d !important;
+}
+
+/* ===========================
+   TABLE HEADER
+   =========================== */
+.dark-mode thead {
+    background: linear-gradient(to right, #1a2d45, #0f1c2e) !important;
+    color: #96c4ff !important;
+}
+
+/* Table rows */
+.dark-mode tr:hover {
+    background: rgba(80,130,255,0.07) !important;
+}
+
+/* ===========================
+   BUTTONS
+   =========================== */
+
+/* General buttons */
+.dark-mode .btn,
+.dark-mode button,
+.dark-mode .btn-primary {
+    background: #254d9b !important;
+    color: #e6efff !important;
+    border: none !important;
+}
+
+.dark-mode .btn:hover,
+.dark-mode button:hover,
+.dark-mode .btn-primary:hover {
+    background: #3968c7 !important;
+}
+
+/* Search button */
+.dark-mode .btn-search {
+    background: #2d5dc4 !important;
+    color: white !important;
+}
+
+.dark-mode .btn-search:hover {
+    background: #3c79f0 !important;
+}
+
+/* Kebab dropdown menu */
+.dark-mode .menu-dropdown {
+    background: #15202e !important;
+    border: 1px solid #253348 !important;
+}
+
+.dark-mode .menu-dropdown button {
+    color: #d7e7ff !important;
+}
+
+.dark-mode .menu-dropdown button:hover {
+    background: rgba(120,170,255,0.12) !important;
+}
+
+/* ===========================
+   BADGES
+   =========================== */
+.dark-mode .badge-gray   { background:#54667a !important; }
+.dark-mode .badge-blue   { background:#357aff !important; }
+.dark-mode .badge-green  { background:#2e8f5a !important; }
+.dark-mode .badge-orange { background:#ff9533 !important; }
+.dark-mode .badge-red    { background:#d84848 !important; }
+.dark-mode .badge-purple { background:#8c6bff !important; }
+
+/* ===========================
+   MESSAGES BOX
+   =========================== */
+.dark-mode .messages-box,
+.dark-mode .list,
+.dark-mode .item {
+    background: #16212f !important;
+    border-color: #243245 !important;
+    color: #d7e7ff !important;
+}
+
+/* ===========================
+   TOASTS / FLASH MESSAGES
+   =========================== */
+.dark-mode .toast {
+    background: #1e2b40 !important;
+    color: #d7e7ff !important;
+    border-left: 4px solid #4f8fff !important;
+}
+html, body, .sidebar, .main, .card, .table-wrapper {
+    transition: background 0.25s ease, color 0.25s ease;
+}
 </style>
 
 {% block head %}{% endblock %}
@@ -149,6 +294,10 @@
        class="nav-item {% if active_page=='messages' %}active{% endif %}">
        <i class="fa-solid fa-envelope"></i> Messages
     </a>
+  
+    <a href="{{ url_for('admin_settings') }}" class="nav-item">
+        <i class="fa-solid fa-gear"></i> Settings
+    </a>
 
     <a href="{{ url_for('admin_logout') }}" class="nav-item">
        <i class="fa-solid fa-right-from-bracket"></i> Logout
@@ -167,7 +316,15 @@ setTimeout(() => {
         el.style.opacity = "0";
     });
 }, 2500); -->
+<!-- </script> -->
+ <script>
+// Apply saved theme on every admin page
+if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.classList.add("dark-mode");
+    document.body.classList.add("dark-mode");
+}
 </script>
+
 {% endblock %}
 </body>
 </html>

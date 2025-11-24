@@ -4,442 +4,443 @@
 {% block content %}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
 
+{% set mode = request.args.get('mode', 'view') %}
+
 <style>
-/* ---------------- GLOBAL ---------------- */
-:root {
-    --page-width: 760px;
-    --box-border: 1px solid #000;
-}
+:root { --page-width: 760px; --box-border: 1px solid #000; }
+body { font-family: Inter, Helvetica, sans-serif; background: #fff; padding: 24px; margin: 0; color: #111; }
+.page { width: var(--page-width); max-width: 100%; margin: 0 auto; border: var(--box-border); padding: 20px; background: white; }
 
-body {
-    font-family: Inter, Helvetica, sans-serif;
-    background: #fff;
-    padding: 24px;
-    margin: 0;
-    color: #111;
-}
-
-.page {
-    width: var(--page-width);
-    max-width: 100%;
-    margin: 0 auto;
-    border: var(--box-border);
-    padding: 20px;
-    background: white;
-}
-
-
+/* print */
 @media print {
-    body, html {
-        margin: 0;
-        padding: 0;
-        width: 210mm;
-        height: 297mm;
-        overflow: hidden;
-    }
-    body * { visibility: hidden; }
-    .page, .page * { visibility: visible; }
-
-    .page {
-        position: absolute;
-        top: 0; left: 0;
-        width: 210mm;
-        height: 297mm;
-        padding: 0;
-        margin: 0;
-        border: none;
-        font-size: 10px;
-    }
-
-    .controls { display: none !important; }
+  body, html { margin:0; padding:0; width:210mm; height:297mm; overflow:hidden; }
+  body * { visibility: hidden; }
+  .page, .page * { visibility: visible; }
+  .page { position:absolute; left:0; top:0; width:210mm; height:297mm; padding:0; margin:0; border:none; font-size:10px; }
+  .controls { display:none !important; }
 }
 
-/* ---------------- HEADER ---------------- */
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
+/* header */
+.header { display:flex; align-items:center; justify-content:center; gap:12px; }
+.school-logo { width:72px; height:72px; border-radius:6px; object-fit:cover; }
+.sep { border:2px solid #000; margin:12px 0 14px; }
+.form-title { text-align:center; font-size:18px; font-weight:600; margin:6px 0 12px; }
 
-.school-logo {
-    width: 72px;
-    height: 72px;
-    border-radius: 6px;
-    object-fit: cover;
-}
+/* boxes */
+.c1 { display:flex; width:100%; }
+.c1-box { border: var(--box-border); padding:4px 6px; min-height:30px; width:100%; display:flex; align-items:center; gap:4px; box-sizing:border-box; }
+.c1-label { font-weight:700; font-size:13px; white-space:nowrap; }
+.c1-value { flex:1; font-size:13px; }
 
-.sep {
-    border: 2px solid #000;
-    margin: 12px 0 14px;
-}
+/* rows */
+.row-2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+.row-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px; }
 
-.form-title {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    margin: 6px 0 12px;
-}
+/* name grid */
+.name-photo { display:flex; gap:16px; margin-top:12px; }
+.name-col { flex:1; }
+.name-row { display:flex; gap:12px; align-items:center; margin-bottom:8px; }
+.name-label { width:auto; font-weight:700; font-size:13px; }
+.name-grid { display:grid; grid-template-columns:repeat(18,22px); grid-auto-rows:22px; }
+.name-grid div { border:1px solid #000; display:flex; justify-content:center; align-items:center; font-size:12px; text-transform:uppercase; }
 
-/* ---------------- GRID + BOXES ---------------- */
-.c1 { display: flex; width: 100%; }
-.c1-box {
-    border: var(--box-border);
-    padding: 4px 6px;
-    min-height: 30px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-.c1-label { font-weight: 700; font-size: 13px; white-space: nowrap; }
-.c1-value { flex: 1; font-size: 13px; }
+/* photo */
+.photo-box { width:120px; height:120px; border:1px solid #000; padding:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.photo-box img { width:100%; height:100%; object-fit:cover; }
 
-/* 2-column & 4-column rows */
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-.row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+/* parents / acad */
+.parent-grid, .acad-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+.parent-box, .acad-box { border:1px solid #000; padding:6px; }
+.parent-box label, .acad-box label { font-weight:700; font-size:13px; }
+.parent-line, .acad-line { border:1px solid #000; padding:6px; min-height:24px; background:#fff; font-size:13px; }
 
-/* ---------------- NAME BOXES ---------------- */
-.name-photo { display: flex; gap: 16px; margin-top: 12px; }
-.name-col { flex: 1; }
-.name-row { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
-.name-label { width: auto; font-weight: 700; font-size: 13px; }
+/* document thumbnails */
+.document-section { margin-top:25px; }
 
-.name-grid {
-    display: grid;
-    grid-template-columns: repeat(18, 22px);
-    grid-auto-rows: 22px;
-}
-.name-grid div {
-    border: 1px solid #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-}
+/* controls */
+.controls { display:flex; justify-content:center; gap:12px; margin-top:16px; }
+.btn { padding:8px 14px; border-radius:6px; font-weight:600; cursor:pointer; border:none; }
+.btn.edit { background:#fff; border:1px solid #2d4ea0; color:#2d4ea0; text-decoration:none; display:inline-flex; align-items:center; }
+.btn.save { background:#2d8a2d; color:white; }
+.btn.cancel { background:#e0e0e0; color:#111; }
+.btn.print { background:#3a5fcf; color:white; }
 
-/* PHOTO */
-.photo-box {
-    width: 120px;
-    height: 120px;
-    border: 1px solid #000;
-    padding: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.photo-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+/* phone horizontal grid */
+.phone-grid { display:grid; grid-template-columns:repeat(11, 20px); gap:4px; }
+.phone-grid div { border:1px solid #000; height:22px; display:flex; align-items:center; justify-content:center; font-size:12px; }
 
-/* ---------------- PARENTS + ACADEMIC ---------------- */
-.parent-grid, .acad-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-}
+/* inputs inside boxes for edit mode */
+.input-inline { width:100%; border:0; font-size:13px; padding:4px; outline:none; background:transparent; }
+.input-inline:focus { background: #f3f7ff; border-radius:4px; }
 
-.parent-box, .acad-box {
-    border: 1px solid #000;
-    padding: 6px;
-}
-.parent-box label, .acad-box label {
-    font-weight: 700;
-    font-size: 13px;
-}
-.parent-line, .acad-line {
-    border: 1px solid #000;
-    padding: 6px;
-    min-height: 24px;
-}
+/* make textarea-like boxes for larger fields */
+.input-textarea { width:100%; border:0; font-size:13px; padding:6px; outline:none; background:transparent; min-height:40px; resize:vertical; }
 
-/* ---------------- CONTROLS ---------------- */
-.controls {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 16px;
-}
-.btn {
-    padding: 8px 14px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-}
-.btn.edit { background: #fff; border: 1px solid #2d4ea0; color: #2d4ea0; }
-.btn.save { background: #2d8a2d; color: white; }
-.btn.print { background: #3a5fcf; color: white; }
-@media print {
-    .document-section { display:none !important; }
-}
-.phone-grid {
-    display: grid;
-    grid-template-columns: repeat(11, 20px); /* 11 boxes side by side */
-    gap: 4px;
-}
-.phone-grid div {
-    border: 1px solid #000;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-}
+/* ensure file input hidden but labeled */
+.file-input { display:none; }
+.file-label { display:inline-block; padding:6px 10px; background:#1A73E8; color:white; border-radius:6px; cursor:pointer; text-decoration:none; }
+
+/* small helper */
+.meta-note { font-size:12px; color:#666; margin-top:6px; }
 </style>
 
-<div class="page">
+<div class="page" role="main">
 
-    <!-- HEADER -->
-    <div class="header">
-        <img src="{{ url_for('static', filename='images/schoollogo.jpg') }}" class="school-logo">
-        <div style="text-align:center;">
-            <div style="font-weight:700;">PADRE GARCIA POLYTECHNIC COLLEGE</div>
-            <div style="font-size:13px;">Brgy. Castillo, Padre Garcia Batangas 4224</div>
-            <div style="font-size:13px;">padregarciapolytechniccollege@gmail.com</div>
+  {# If admin wants to edit we wrap editable fields in a form that posts to admin_save_student #}
+  {% if mode == 'edit' %}
+  <form method="POST" action="{{ url_for('admin_save_student', app_id=app_id) }}" enctype="multipart/form-data" id="admin-edit-form">
+  {% endif %}
+
+  <!-- HEADER -->
+  <div class="header">
+    <img src="{{ url_for('static', filename='images/schoollogo.png') }}" class="school-logo" alt="logo">
+    <div style="text-align:center;">
+      <div style="font-weight:700;">PADRE GARCIA POLYTECHNIC COLLEGE</div>
+      <div style="font-size:13px;">Brgy. Castillo, Padre Garcia Batangas 4224</div>
+      <div style="font-size:13px;">padregarciapolytechniccollege@gmail.com</div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <div class="form-title">COLLEGE ADMISSION APPLICATION FORM</div>
+
+  <!-- PROGRAM + DATE -->
+  <div class="row-2">
+    <div class="c1">
+      <div class="c1-box">
+        <div class="c1-label">Program (Course)</div>
+        <div class="c1-value">
+          {% if mode == 'edit' %}
+            <input class="input-inline" name="program" value="{{ form.get('program','') }}">
+          {% else %}
+            {{ form.get('program','') }}
+          {% endif %}
         </div>
+      </div>
     </div>
 
-    <hr class="sep">
-
-    <div class="form-title">COLLEGE ADMISSION APPLICATION FORM</div>
-
-    <!-- PROGRAM + DATE -->
-    <div class="row-2">
-        <div class="c1"><div class="c1-box"><div class="c1-label">Program (Course)</div><div class="c1-value">{{ form.get('program','') }}</div></div></div>
-        <div class="c1"><div class="c1-box"><div class="c1-label">Date of Application</div><div class="c1-value">{{ form.get('doa','') }}</div></div></div>
+    <div class="c1">
+      <div class="c1-box">
+        <div class="c1-label">Date of Application</div>
+        <div class="c1-value">
+          {% if mode == 'edit' %}
+            <input class="input-inline" name="doa" value="{{ form.get('doa','') }}">
+          {% else %}
+            {{ form.get('doa','') }}
+          {% endif %}
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- NAME + PHOTO -->
-    <div class="name-photo">
-        <div class="name-col">
-
-            {% for field, label in [('lastName','LAST NAME'), ('firstName','FIRST NAME'), ('middleName','MIDDLE NAME')] %}
-            <div class="name-row">
-                <div class="name-label">{{ label }}</div>
-                <div class="name-grid">
-                    {% set v = (form.get(field,'') or '')[:18] %}
-                    {% for i in range(18) %}
-                    <div>{{ v[i:i+1]|upper if v|length > i else '' }}</div>
-                    {% endfor %}
-                </div>
-            </div>
+  <!-- NAME + PHOTO -->
+  <div class="name-photo">
+    <div class="name-col">
+      {% for field, label in [('lastName','LAST NAME'), ('firstName','FIRST NAME'), ('middleName','MIDDLE NAME')] %}
+      <div class="name-row">
+        <div class="name-label">{{ label }}</div>
+        <div class="name-grid">
+          {% set v = (form.get(field,'') or '')[:18] %}
+          {% if mode == 'edit' %}
+            {# keep box visuals but provide a single hidden input and a visible small input for quick change #}
+            <input type="text" name="{{ field }}" value="{{ form.get(field,'') }}" class="input-inline" style="grid-column:1 / -1; padding:6px; border:1px solid #ccc;">
+            {# also render the original boxed grid for appearance (non-interactive) below the input #}
+            {% for i in range(18) %}
+              <div>{{ v[i:i+1]|upper if v|length > i else '' }}</div>
             {% endfor %}
-
+          {% else %}
+            {% for i in range(18) %}
+              <div>{{ v[i:i+1]|upper if v|length > i else '' }}</div>
+            {% endfor %}
+          {% endif %}
         </div>
-
-        <div class="photo-box">
-            {% if photo_filename %}
-                <img src="{{ url_for('uploaded_file', filepath=photo_filename) }}">
-            {% else %}
-                <img src="{{ url_for('static', filename='images/picture.png') }}">
-            {% endif %}
-        </div>
+      </div>
+      {% endfor %}
     </div>
 
-    <!-- DOB + POB -->
-    <div class="row-2">
-        <div class="c1"><div class="c1-box"><div class="c1-label">Date of Birth</div><div class="c1-value">{{ form.get('dob','') }}</div></div></div>
-        <div class="c1"><div class="c1-box"><div class="c1-label">Place of Birth</div><div class="c1-value">{{ form.get('pob','') }}</div></div></div>
+    <div class="photo-box">
+      {% if photo_filename %}
+        <img src="{{ url_for('uploaded_file', filepath=photo_filename) }}" alt="photo">
+      {% else %}
+        <img src="{{ url_for('static', filename='images/picture.png') }}" alt="photo">
+      {% endif %}
+      {% if mode == 'edit' %}
+        <div style="position:absolute; margin-top:8px;">
+          <label class="file-label" for="photo-input">Change Photo</label>
+          <input id="photo-input" class="file-input" type="file" name="photo" accept="image/*">
+          <div class="meta-note">Allowed: png jpg jpeg pdf</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- DOB + POB -->
+  <div class="row-2">
+    <div class="c1">
+      <div class="c1-box">
+        <div class="c1-label">Date of Birth</div>
+        <div class="c1-value">
+          {% if mode == 'edit' %}
+            <input class="input-inline" name="dob" value="{{ form.get('dob','') }}">
+          {% else %}
+            {{ form.get('dob','') }}
+          {% endif %}
+        </div>
+      </div>
     </div>
 
-    <!-- GENDER / STATUS / NAT / REL -->
-    <div class="row-4">
-        {% for field, label in [('gender','Sex'),('civil_status','Civil Status'),('nationality','Nationality'),('religion','Religion')] %}
-        <div class="c1"><div class="c1-box"><div class="c1-label">{{ label }}</div><div class="c1-value">{{ form.get(field,'') }}</div></div></div>
+    <div class="c1">
+      <div class="c1-box">
+        <div class="c1-label">Place of Birth</div>
+        <div class="c1-value">
+          {% if mode == 'edit' %}
+            <input class="input-inline" name="pob" value="{{ form.get('pob','') }}">
+          {% else %}
+            {{ form.get('pob','') }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENDER / STATUS / NAT / REL -->
+  <div class="row-4" style="margin-top:10px;">
+    {% for field, label in [('gender','Sex'),('civil_status','Civil Status'),('nationality','Nationality'),('religion','Religion')] %}
+    <div class="c1">
+      <div class="c1-box">
+        <div class="c1-label">{{ label }}</div>
+        <div class="c1-value">
+          {% if mode == 'edit' %}
+            <input class="input-inline" name="{{ field }}" value="{{ form.get(field,'') }}">
+          {% else %}
+            {{ form.get(field,'') }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ADDRESS -->
+  <div class="row-2" style="margin-top:10px;">
+    <div class="c1">
+      <div class="c1-box">
+        <div class="c1-label">Home Address</div>
+        <div class="c1-value">
+          {% if mode == 'edit' %}
+            <input class="input-inline" name="street" value="{{ form.get('street','') }}">
+            <div style="margin-top:6px;">
+              <input class="input-inline" name="barangay" placeholder="Barangay" value="{{ form.get('barangay','') }}" style="width:30%; display:inline-block;">
+              <input class="input-inline" name="city" placeholder="City" value="{{ form.get('city','') }}" style="width:30%; display:inline-block;">
+              <input class="input-inline" name="province" placeholder="Province" value="{{ form.get('province','') }}" style="width:30%; display:inline-block;">
+            </div>
+          {% else %}
+            {{ form.get('street','') }}{% if form.get('barangay') %}, {{ form.get('barangay') }}{% endif %}{% if form.get('city') %}, {{ form.get('city') }}{% endif %}{% if form.get('province') %}, {{ form.get('province') }}{% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="c1">
+      <div class="c1-box">
+        <div class="c1-label">Postal Code</div>
+        <div class="c1-value">
+          {% if mode == 'edit' %}
+            <input class="input-inline" name="zipcode" value="{{ form.get('zipcode','') }}">
+          {% else %}
+            {{ form.get('zipcode','') }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHONE + EMAIL -->
+  <div style="margin-top:10px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="width:120px; font-weight:700;">PHONE NO.</div>
+      <div class="phone-grid" aria-hidden="{{ 'false' if mode == 'view' else 'true' }}">
+        {% set phone = (form.get('studphone','') or '')[:11] %}
+        {% for i in range(11) %}
+          <div>{{ phone[i:i+1] if phone|length>i else '' }}</div>
         {% endfor %}
+      </div>
+
+      {% if mode == 'edit' %}
+        <div style="margin-left:12px;">
+          <input class="input-inline" name="studphone" value="{{ form.get('studphone','') }}" placeholder="0991..." style="width:160px; border:1px solid #ccc; padding:6px; border-radius:6px;">
+        </div>
+      {% endif %}
     </div>
 
-    <!-- ADDRESS -->
-    <div class="row-2">
-        <div class="c1">
-            <div class="c1-box">
-                <div class="c1-label">Home Address</div>
-                <div class="c1-value">
-                    {{ form.get('street','') }}
-                    {% if form.get('barangay') %}, {{ form.get('barangay') }}{% endif %}
-                    {% if form.get('city') %}, {{ form.get('city') }}{% endif %}
-                    {% if form.get('province') %}, {{ form.get('province') }}{% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="c1"><div class="c1-box"><div class="c1-label">Postal Code</div><div class="c1-value">{{ form.get('zipcode','') }}</div></div></div>
+    <div style="display:flex; gap:12px; margin-top:8px; align-items:center;">
+      <div style="width:120px; font-weight:700;">EMAIL</div>
+      <div style="flex:1; border:1px solid #000; padding:8px;">
+        {% if mode == 'edit' %}
+          <input class="input-inline" name="email" value="{{ form.get('email','') }}">
+        {% else %}
+          {{ form.get('email','') }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- PARENTS -->
+  <div class="parent-grid">
+    <div class="parent-box">
+      <label>Father’s Name</label>
+      <div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="fatherName" value="{{ form.get('fatherName','') }}">{% else %}{{ form.get('fatherName','') }}{% endif %}</div>
+      <label>Occupation</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="fatherOccupation" value="{{ form.get('fatherOccupation','') }}">{% else %}{{ form.get('fatherOccupation','') }}{% endif %}</div>
+      <label>Address</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="fatherAddress" value="{{ form.get('fatherAddress','') }}">{% else %}{{ form.get('fatherAddress','') }}{% endif %}</div>
+      <label>Contact</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="fatherPhone" value="{{ form.get('fatherPhone','') }}">{% else %}{{ form.get('fatherPhone','') }}{% endif %}</div>
     </div>
 
-    <!-- PHONE + EMAIL -->
-    <div style="margin-top:10px;">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <div style="width:120px; font-weight:700;">PHONE NO.</div>
-            <div class="phone-grid">
-                {% set phone = (form.get('studphone','') or '')[:11] %}
-                {% for i in range(11) %}
-                <div style="border:1px solid #000; padding:4px; text-align:center;">
-                    {{ phone[i:i+1] if phone|length>i else '' }}
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div style="display:flex; gap:12px; margin-top:8px;">
-            <div style="width:120px; font-weight:700;">EMAIL</div>
-            <div style="flex:1; border:1px solid #000; padding:8px;">{{ form.get('email','') }}</div>
-        </div>
+    <div class="parent-box">
+      <label>Mother’s Maiden Name</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="motherName" value="{{ form.get('motherName','') }}">{% else %}{{ form.get('motherName','') }}{% endif %}</div>
+      <label>Occupation</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="motherOccupation" value="{{ form.get('motherOccupation','') }}">{% else %}{{ form.get('motherOccupation','') }}{% endif %}</div>
+      <label>Address</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="motherAddress" value="{{ form.get('motherAddress','') }}">{% else %}{{ form.get('motherAddress','') }}{% endif %}</div>
+      <label>Contact</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="motherPhone" value="{{ form.get('motherPhone','') }}">{% else %}{{ form.get('motherPhone','') }}{% endif %}</div>
     </div>
 
-    <!-- PARENTS INFO -->
-    <div class="parent-grid">
-        <div class="parent-box">
-            <label>Father’s Name</label><div class="parent-line">{{ form.get('fatherName','') }}</div>
-            <label>Occupation</label><div class="parent-line">{{ form.get('fatherOccupation','') }}</div>
-            <label>Address</label><div class="parent-line">{{ form.get('fatherAddress','') }}</div>
-            <label>Contact</label><div class="parent-line">{{ form.get('fatherPhone','') }}</div>
-        </div>
+    <div class="parent-box">
+      <label>Guardian</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="guardianName" value="{{ form.get('guardianName','') }}">{% else %}{{ form.get('guardianName','') }}{% endif %}</div>
+      <label>Occupation</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="guardianOccupation" value="{{ form.get('guardianOccupation','') }}">{% else %}{{ form.get('guardianOccupation','') }}{% endif %}</div>
+      <label>Address</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="guardianAddress" value="{{ form.get('guardianAddress','') }}">{% else %}{{ form.get('guardianAddress','') }}{% endif %}</div>
+      <label>Contact</label><div class="parent-line">{% if mode=='edit' %}<input class="input-inline" name="guardianPhone" value="{{ form.get('guardianPhone','') }}">{% else %}{{ form.get('guardianPhone','') }}{% endif %}</div>
+    </div>
+  </div>
 
-        <div class="parent-box">
-            <label>Mother’s Maiden Name</label><div class="parent-line">{{ form.get('motherName','') }}</div>
-            <label>Occupation</label><div class="parent-line">{{ form.get('motherOccupation','') }}</div>
-            <label>Address</label><div class="parent-line">{{ form.get('motherAddress','') }}</div>
-            <label>Contact</label><div class="parent-line">{{ form.get('motherPhone','') }}</div>
-        </div>
+  <!-- INCOME -->
+  <div style="margin-top:10px; display:flex; gap:12px;">
+    <div style="width:120px; font-weight:700;">Monthly Income</div>
+    <div style="flex:1; border:1px solid #000; padding:8px;">
+      {% if mode=='edit' %}
+        <input class="input-inline" name="income" value="{{ form.get('income','') }}">
+      {% else %}
+        {{ form.get('income','') }}
+      {% endif %}
+    </div>
+  </div>
 
-        <div class="parent-box">
-            <label>Guardian</label><div class="parent-line">{{ form.get('guardianName','') }}</div>
-            <label>Occupation</label><div class="parent-line">{{ form.get('guardianOccupation','') }}</div>
-            <label>Address</label><div class="parent-line">{{ form.get('guardianAddress','') }}</div>
-            <label>Contact</label><div class="parent-line">{{ form.get('guardianPhone','') }}</div>
-        </div>
+  <!-- ACADEMIC -->
+  <div class="acad-grid">
+    <div class="acad-box">
+      <label>Senior High School Strand</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="strand" value="{{ form.get('strand','') }}">{% else %}{{ form.get('strand','') }}{% endif %}</div>
+      <label>SHS Name</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="shsName" value="{{ form.get('shsName','') }}">{% else %}{{ form.get('shsName','') }}{% endif %}</div>
+      <label>SHS Address</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="shsAddress" value="{{ form.get('shsAddress','') }}">{% else %}{{ form.get('shsAddress','') }}{% endif %}</div>
+      <label>Inclusive Dates</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="inclusiveDates" value="{{ form.get('inclusiveDates','') }}">{% else %}{{ form.get('inclusiveDates','') }}{% endif %}</div>
     </div>
 
-    <!-- INCOME -->
-    <div style="margin-top:10px; display:flex; gap:12px;">
-        <div style="width:120px; font-weight:700;">Monthly Income</div>
-        <div style="flex:1; border:1px solid #000; padding:8px;">{{ form.get('income','') }}</div>
+    <div class="acad-box">
+      <label>College / ALS (if any)</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="cAls" value="{{ form.get('cAls','') }}">{% else %}{{ form.get('cAls','') }}{% endif %}</div>
+      <label>School Name</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="cschoolName" value="{{ form.get('cschoolName','') }}">{% else %}{{ form.get('cschoolName','') }}{% endif %}</div>
+      <label>Address</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="cschoolAddress" value="{{ form.get('cschoolAddress','') }}">{% else %}{{ form.get('cschoolAddress','') }}{% endif %}</div>
+      <label>Inclusive Dates</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="cinclusivedates" value="{{ form.get('cinclusivedates','') }}">{% else %}{{ form.get('cinclusivedates','') }}{% endif %}</div>
+      <label>Program</label><div class="acad-line">{% if mode=='edit' %}<input class="input-inline" name="cprogram" value="{{ form.get('cprogram','') }}">{% else %}{{ form.get('cprogram','') }}{% endif %}</div>
     </div>
 
-    <!-- ACADEMIC -->
-    <div class="acad-grid">
-        <div class="acad-box">
-            <label>Senior High School Strand</label><div class="acad-line">{{ form.get('strand','') }}</div>
-            <label>SHS Name</label><div class="acad-line">{{ form.get('shsName','') }}</div>
-            <label>SHS Address</label><div class="acad-line">{{ form.get('shsAddress','') }}</div>
-            <label>Inclusive Dates</label><div class="acad-line">{{ form.get('inclusiveDates','') }}</div>
+    <div class="acad-box">
+      <label>Member of Cultural Minority Group?</label>
+      <div class="acad-line">
+        {% if mode=='edit' %}
+          <select name="culturalMinority" class="input-inline">
+            <option value="">-- select --</option>
+            <option value="No" {% if form.get('culturalMinority')=='No' %}selected{% endif %}>No</option>
+            <option value="Yes" {% if form.get('culturalMinority')=='Yes' %}selected{% endif %}>Yes</option>
+          </select>
+        {% else %}
+          No {% if form.get('culturalMinority') == 'No' %}✔️{% endif %} &nbsp;&nbsp; Yes {% if form.get('culturalMinority') == 'Yes' %}✔️{% endif %}
+        {% endif %}
+      </div>
+
+      <label>Physical Disability?</label>
+      <div class="acad-line">
+        {% if mode=='edit' %}
+          <select name="disability" class="input-inline">
+            <option value="">-- select --</option>
+            <option value="No" {% if form.get('disability')=='No' %}selected{% endif %}>No</option>
+            <option value="Yes" {% if form.get('disability')=='Yes' %}selected{% endif %}>Yes</option>
+          </select>
+        {% else %}
+          No {% if form.get('disability') == 'No' %}✔️{% endif %} &nbsp;&nbsp; Yes {% if form.get('disability') == 'Yes' %}✔️{% endif %}
+        {% endif %}
+      </div>
+
+      {% if form.get('disability_details') or mode=='edit' %}
+        <label>(Specify)</label>
+        <div class="acad-line">
+          {% if mode=='edit' %}
+            <textarea class="input-textarea" name="disability_details">{{ form.get('disability_details','') }}</textarea>
+          {% else %}
+            {{ form.get('disability_details','') }}
+          {% endif %}
         </div>
-
-        <div class="acad-box">
-            <label>College / ALS (if any)</label><div class="acad-line">{{ form.get('cAls','') }}</div>
-            <label>School Name</label><div class="acad-line">{{ form.get('cschoolName','') }}</div>
-            <label>Address</label><div class="acad-line">{{ form.get('cschoolAddress','') }}</div>
-            <label>Inclusive Dates</label><div class="acad-line">{{ form.get('cinclusivedates','') }}</div>
-            <label>Program</label><div class="acad-line">{{ form.get('cprogram','') }}</div>
-        </div>
-
-        <div class="acad-box">
-            <label>Member of Cultural Minority Group?</label>
-            <div class="acad-line">
-                No {% if form.get('culturalMinority') == 'No' %}✔️{% endif %}
-                &nbsp;&nbsp;
-                Yes {% if form.get('culturalMinority') == 'Yes' %}✔️{% endif %}
-            </div>
-
-            <label>Physical Disability?</label>
-            <div class="acad-line">
-                No {% if form.get('disability') == 'No' %}✔️{% endif %}
-                &nbsp;&nbsp;
-                Yes {% if form.get('disability') == 'Yes' %}✔️{% endif %}
-            </div>
-
-            {% if form.get('disability_details') %}
-            <label>(Specify)</label>
-            <div class="acad-line">{{ form.get('disability_details','') }}</div>
-            {% endif %}
-        </div>
+      {% endif %}
     </div>
-<!-- ============================= -->
-<!--   DOCUMENT THUMBNAIL VIEWER   -->
-<!-- ============================= -->
-<div class="document-section" style="margin-top:25px;">
+  </div>
 
-    <h3 style="font-size:18px; font-weight:700; margin-bottom:12px;">
-        Uploaded Documents
-    </h3>
-
+  {# DOCUMENT THUMBNAILS #}
+  <div class="document-section">
+    <h3 style="font-size:18px; font-weight:700; margin-bottom:12px;">Uploaded Documents</h3>
     <div style="display:flex; gap:18px; flex-wrap:wrap;">
-
-        {% for key, label in {
-            "psa":"PSA Birth Certificate",
-            "form138":"Form 138 (Report Card)",
-            "goodmoral":"Certificate of Good Moral"
-        }.items() %}
-
-        <div style="width:240px;">
-            <div style="font-weight:600; margin-bottom:6px;">{{ label }}</div>
-
-            <div style="border:1px solid #aaa; border-radius:8px; overflow:hidden; height:160px; display:flex; align-items:center; justify-content:center; background:#fff;">
-                {% if documents.get(key) %}
-                    
-                    {% set ext = documents.get(key).split('.')[-1].lower() %}
-                    
-                    {% if ext in ['jpg','jpeg','png','gif','bmp','webp'] %}
-                        <img src="{{ url_for('uploaded_file', filepath=documents.get(key)) }}"
-                             style="width:100%; height:100%; object-fit:cover;">
-                    
-                    {% else %}
-                        <div style="font-size:14px; text-align:center; color:#666;">
-                            PDF Document<br>(Preview not available)
-                        </div>
-                    {% endif %}
-
-                {% else %}
-                    <div style="font-size:14px; text-align:center; color:#999;">
-                        No file uploaded
-                    </div>
-                {% endif %}
-            </div>
-
-            {% if documents.get(key) %}
-            <div style="margin-top:8px; display:flex; gap:8px;">
-                <a href="{{ url_for('uploaded_file', filepath=documents.get(key)) }}"
-                   target="_blank"
-                   style="padding:6px 10px; background:#1A73E8; color:white; border-radius:6px; font-size:13px; text-decoration:none;">
-                   View
-                </a>
-
-                <a href="{{ url_for('uploaded_file', filepath=documents.get(key)) }}"
-                   download
-                   style="padding:6px 10px; background:#4caf50; color:white; border-radius:6px; font-size:13px; text-decoration:none;">
-                   Download
-                </a>
-            </div>
+      {% for key, label in {"psa":"PSA Birth Certificate", "form138":"Form 138 (Report Card)", "goodmoral":"Certificate of Good Moral"}.items() %}
+      <div style="width:240px;">
+        <div style="font-weight:600; margin-bottom:6px;">{{ label }}</div>
+        <div style="border:1px solid #aaa; border-radius:8px; overflow:hidden; height:160px; display:flex; align-items:center; justify-content:center; background:#fff;">
+          {% if documents.get(key) %}
+            {% set ext = documents.get(key).split('.')[-1].lower() %}
+            {% if ext in ['jpg','jpeg','png','gif','bmp','webp'] %}
+              <img src="{{ url_for('uploaded_file', filepath=documents.get(key)) }}" style="width:100%; height:100%; object-fit:cover;">
+            {% else %}
+              <div style="font-size:14px; text-align:center; color:#666;">PDF Document<br>(Preview not available)</div>
             {% endif %}
+          {% else %}
+            <div style="font-size:14px; text-align:center; color:#999;">No file uploaded</div>
+          {% endif %}
         </div>
 
-        {% endfor %}
-
+        {% if documents.get(key) %}
+        <div style="margin-top:8px; display:flex; gap:8px;">
+          <a href="{{ url_for('uploaded_file', filepath=documents.get(key)) }}" target="_blank" style="padding:6px 10px; background:#1A73E8; color:white; border-radius:6px; font-size:13px; text-decoration:none;">View</a>
+          <a href="{{ url_for('uploaded_file', filepath=documents.get(key)) }}" download style="padding:6px 10px; background:#4caf50; color:white; border-radius:6px; font-size:13px; text-decoration:none;">Download</a>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
     </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    {% if mode == 'edit' %}
+      <button type="submit" class="btn save" title="Save changes">Save Changes</button>
+      <a href="{{ url_for('admin_preview', app_id=app_id) }}" class="btn cancel" title="Cancel">Cancel</a>
+    {% else %}
+      <a href="{{ url_for('admin_preview', app_id=app_id) }}?mode=edit" class="btn edit">Edit</a>
+      <button type="button" class="btn print" onclick="window.print()">Print</button>
+    {% endif %}
+  </div>
+
+  {% if mode == 'edit' %}
+  </form>
+  {% endif %}
+
 </div>
-    <!-- CONTROLS -->
-    <div class="controls">
-        <a href="{{ url_for('form_page') }}?app_id={{ app_id }}">
-            <button class="btn edit">Edit Form</button>
-        </a>
 
-        <form action="{{ url_for('admin_save_student', app_id=app_id) }}" method="POST">
-            <button class="btn save" type="submit">
-                Save Changes
-            </button>
-        </form>
+<script>
+  // show chosen file name (optional)
+  document.addEventListener('DOMContentLoaded', function() {
+    var photoInput = document.getElementById('photo-input');
+    if (photoInput) {
+      photoInput.addEventListener('change', function(){
+        if (this.files && this.files[0]) {
+          // optionally preview (browser-native), but we already show the server image
+        }
+      });
+    }
+  });
+</script>
 
-        <button class="btn print" onclick="window.print()">Print</button>
-    </div>
-
-</div>
 {% endblock %}
-
-
-
-
-
-
 

@@ -190,6 +190,12 @@ body {
     .header { left: 0; }
     .main { margin-left: 0; padding: 100px 20px; width: 100%; }
 }
+.stub-line { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.stub-label { font-weight: 700; font-size: 13px; white-space: nowrap; }
+.stub-grid-horizontal { display: grid; grid-template-columns: repeat(18, 24px); gap: 2px; }
+.permit-stub { border-top:3px dashed #000; border-bottom: 1px solid black; margin-top:18px;  padding:12px auto 12px; }
+.stub-grid-horizontal div { border: 1px solid #000; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; font-size: 12px; text-transform: uppercase; }
+.photo-box {margin-bottom: 20px;}
 </style>
 </head>
 
@@ -248,6 +254,7 @@ body {
     </div>
 
     <!-- ---------------- MODE LOGIC ---------------- -->
+     <!-- NO EXAM SCHEDULE YETTT -->
 
     {% if mode == "waiting_exam" %}
     <div class="card">
@@ -256,16 +263,76 @@ body {
     </div>
     {% endif %}
 
+    <!-- EXAM SCHEDULED  -->
     {% if mode == "exam_scheduled" %}
     <div class="card">
-        <h3>Your Exam Schedule</h3>
-        <div class="info-box">
-            <strong>Date:</strong> {{ exam.exam_date }} <br>
-            <strong>Time:</strong> {{ exam.exam_time }} <br>
-            <strong>Room:</strong> {{ exam.exam_room }} <br>
-            <strong>Notes:</strong> {{ exam.notes }}
-        </div>
-        <p>Please be on time. Bring your requirements.</p>
+        <h4>Your Exam Schedule: </h4>
+
+    <div class="permit-stub">
+    <h4 style="margin:0 0 8px 0; text-align:center; font-weight:700;">
+        COLLEGE ADMISSION TEST PERMIT STUB
+    </h4>
+
+    <div style="margin-top:10px; font-size:14px;">
+        <strong>Control No:</strong> {{ app_id }} <br>
+        <strong>Date of Examination:</strong> {{ exam.exam_date or "________________" }}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <strong>Time:</strong> {{ exam.exam_time or "________________" }}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <strong>Testing Rm:</strong> {{ exam.exam_room or "________________" }}
+    </div>
+
+    <div class="permit-body" style="display:flex; gap:25px; margin-top:20px; align-items:flex-start;">
+        <div style="flex:1;">
+        <!-- LAST NAME -->
+    <div class="stub-line">
+    <div class="stub-label">LAST NAME:</div>
+    <div class="stub-grid-horizontal">
+        {% set ln = (form.get('lastName','') or '')[:18] %}
+        {% for i in range(18) %}
+        <div>{{ ln[i:i+1]|upper if ln|length > i else '' }}</div>
+        {% endfor %}
+    </div>
+    </div>
+
+    <div class="stub-line">
+    <div class="stub-label">FIRST NAME:</div>
+    <div class="stub-grid-horizontal">
+        {% set ln = (form.get('firstName','') or '')[:18] %}
+        {% for i in range(18) %}
+        <div>{{ ln[i:i+1]|upper if ln|length > i else '' }}</div>
+        {% endfor %}
+    </div>
+    </div>
+    <div class="stub-line">
+    <div class="stub-label">MIDDLE NAME:</div>
+    <div class="stub-grid-horizontal">
+        {% set ln = (form.get('middleName','') or '')[:18] %}
+        {% for i in range(18) %}
+        <div>{{ ln[i:i+1]|upper if ln|length > i else '' }}</div>
+        {% endfor %}
+    </div>
+    </div>
+    </div>
+
+    <!-- PHOTO -->
+<div class="photo-box" 
+     style="border:1px solid #000; overflow:hidden; width:120px; height:120px; 
+            border-radius:3px; flex-shrink:0; align-self:flex-start;">
+
+    {% if photo_filename %}
+        <img src="{{ url_for('uploaded_file', filepath=photo_filename) }}" 
+             style="width:100%; height:100%; object-fit:cover;">
+    {% else %}
+        <img src="{{ url_for('static', filename='images/picture.png') }}" 
+             style="width:100%; height:100%; object-fit:cover;">
+    {% endif %}
+</div>
+
+    
+  </div>
+</div>
+<i>Please be on time.</i>
     </div>
     {% endif %}
 

@@ -219,11 +219,10 @@ td {
             <td class="actions">
 
     <!-- View -->
-    <a class="btn btn-view" title="View Application"
-       href="{{ url_for('admin_preview', app_id=s.app_id) }}">
+    
+    <a href="{{ url_for('admin_preview', app_id=s.app_id) }}" title="View Application" class="btn btn-view">
         <i class="fa-solid fa-eye"></i>
     </a>
-    
     
     <!-- Message -->
     <a class="btn btn-msg" title="Message Student"
@@ -233,30 +232,60 @@ td {
 
     <!-- Kebab Menu -->
     <div class="action-menu">
-        <button class="menu-btn">⋮</button>
+    <button class="menu-btn">⋮</button>
 
-        <div class="menu-dropdown">
+    <div class="menu-dropdown">
 
-            <form method="POST" action="{{ url_for('admin_approve', app_id=s.app_id) }}">
-                <button type="submit"> Approve </button>
-            </form>
+        <!-- APPROVE -->
+{% if s.status == "Enrolled" %}
+  <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Already enrolled">Approve</button>
 
+{% elif s.status == "Rejected" %}
+  <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Cannot approve — rejected">Approve</button>
+
+{% elif s.get('exam_taken', 0) | int != 1 %}
+  <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Cannot approve — exam not taken">Approve</button>
+
+{% else %}
+  <form method="POST" action="{{ url_for('admin_approve', app_id=s.app_id) }}">
+    <button type="submit">Approve</button>
+  </form>
+{% endif %}
+       
+       {% if s.status == "Enrolled" %}
+  <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Already enrolled">Enroll</button>
+
+{% elif s.status == "Rejected" %}
+  <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Cannot enroll — rejected">Enroll</button>
+
+{% elif s.get('exam_taken', 0) | int != 1 %}
+  <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Cannot enroll — exam not taken">Enroll</button>
+
+{% else %}
+  <form method="POST" action="{{ url_for('admin_enroll', app_id=s.app_id) }}">
+    <button type="submit">Enroll</button>
+  </form>
+{% endif %}
+        
+             <!-- REJECT -->
+        {% if s.status == "Enrolled" %}
+            <button type="button" style="opacity:0.5; cursor:not-allowed;"
+                    title="Cannot reject — student already enrolled">Reject</button>
+        {% else %}
             <form method="POST" action="{{ url_for('admin_reject', app_id=s.app_id) }}">
-                <button type="submit"> Reject</button>
+                <button type="submit">Reject</button>
             </form>
+        {% endif %}
 
-            <form method="POST" action="{{ url_for('admin_enroll', app_id=s.app_id) }}">
-                <button type="submit"> Enroll</button>
-            </form>
+        <!-- DELETE (always allowed) -->
+        <form method="POST" 
+              action="{{ url_for('admin_delete_student', student_id=s.id) }}"
+              onsubmit="return confirm('Delete this student?');">
+            <button type="submit">🗑 Delete</button>
+        </form>
 
-            <form method="POST" 
-                  action="{{ url_for('admin_delete_student', student_id=s.id) }}"
-                  onsubmit="return confirm('Delete this student?');">
-                <button type="submit">🗑 Delete</button>
-            </form>
-
-        </div>
     </div>
+</div>
 
 </td>
         </tr>

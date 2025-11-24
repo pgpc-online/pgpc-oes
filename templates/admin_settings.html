@@ -1,0 +1,98 @@
+<li>
+    <a href="{{ url_for('admin_settings') }}">
+        <i class="fa-solid fa-gear"></i> Settings
+    </a>
+</li>{% extends "adminbase.html" %}
+{% block content %}
+
+<h2 class="page-title">Settings</h2>
+
+<div class="settings-card">
+    <label class="switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider round"></span>
+    </label>
+
+    <span style="font-size: 18px; margin-left: 10px;">
+        Enable Dark Mode
+    </span>
+</div>
+
+<style>
+.settings-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Toggle switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 28px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #1a237e;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+</style>
+
+<script>
+const toggle = document.getElementById("darkModeToggle");
+
+if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.classList.add("dark-mode");
+    document.body.classList.add("dark-mode");
+    toggle.checked = true;
+}
+
+toggle.addEventListener("change", function() {
+    if (this.checked) {
+        document.documentElement.classList.add("dark-mode");
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("theme", "dark");
+    } else {
+        document.documentElement.classList.remove("dark-mode");
+        document.body.classList.remove("dark-mode");
+        localStorage.setItem("theme", "light");
+    }
+});
+</script>
+
+{% endblock %}

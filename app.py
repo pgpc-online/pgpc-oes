@@ -640,7 +640,12 @@ def success_page(app_id):
 
     # Get exam schedule
     c.execute("SELECT * FROM exam_schedule WHERE app_id=?", (app_id,))
-    exam = c.fetchone()
+    exam = c.fetchone()   # may be None
+
+    # Load photo
+    c.execute("SELECT file_path FROM documents WHERE app_id=? AND doc_type='photo'", (app_id,))
+    d = c.fetchone()
+    photo_filename = d["file_path"] if d else None
 
     # Get application status
     c.execute("SELECT * FROM application_status WHERE app_id=?", (app_id,))
@@ -677,9 +682,9 @@ def success_page(app_id):
         app_id=app_id,
         exam=exam,
         mode=mode,
-        unread=unread
+        unread=unread,
+        photo_filename=photo_filename
     )
-
 
 # ---------------- Additional helpers ----------------
 def get_app_by_student(student_id):
@@ -983,28 +988,28 @@ def manage_students():
     
     sql = """
     SELECT 
-        s.id AS student_id,
-        s.email,
-        a.app_id,
-        a.form_json,
-        a.program,
-        a.created_at,
-        a.submitted,
-        
-        st.exam_taken,
-        st.approved,
-        st.enrolled,
-        st.rejected,
-        st.reject_reason,
+    s.id AS student_id,
+    s.email,
+    a.app_id,
+    a.form_json,
+    a.program,
+    a.created_at,
+    a.submitted,
 
-        CASE
-            WHEN st.rejected = 1 THEN 'Rejected'
-            WHEN st.enrolled = 1 THEN 'Enrolled'
-            WHEN st.approved = 1 THEN 'Approved'
-            WHEN st.exam_taken = 1 THEN 'Exam Taken'
-            WHEN a.submitted = 1 THEN 'Submitted'
-            ELSE 'Draft'
-        END AS status
+    COALESCE(st.exam_taken, 0)   AS exam_taken,
+    COALESCE(st.approved, 0)     AS approved,
+    COALESCE(st.enrolled, 0)     AS enrolled,
+    COALESCE(st.rejected, 0)     AS rejected,
+    st.reject_reason,
+
+    CASE
+        WHEN st.rejected = 1 THEN 'Rejected'
+        WHEN st.enrolled = 1 THEN 'Enrolled'
+        WHEN st.approved = 1 THEN 'Approved'
+        WHEN st.exam_taken = 1 THEN 'Exam Taken'
+        WHEN a.submitted = 1 THEN 'Submitted'
+        ELSE 'Draft'
+    END AS status
 
     FROM students s
     LEFT JOIN applicants a ON a.student_id = s.id
@@ -1059,19 +1064,22 @@ def manage_students():
             status = "Not Submitted"
 
         students.append({
-            "id": r["student_id"],
-            "email": r["email"],
-            "app_id": r["app_id"],
-            "submitted": r["submitted"],
-            "status": status,
-            "created_at": r["created_at"],
-            "firstName": form.get("firstName", ""),
-            "middleName": form.get("middleName", ""),
-            "lastName": form.get("lastName", ""),
-            "gender": form.get("gender", "N/A"),
-            "program": r["program"] or " ",
-            "phone": form.get("studphone", "N/A")
-        })
+        "id": r["student_id"],
+        "email": r["email"],
+        "app_id": r["app_id"],
+        "submitted": r["submitted"],
+        "status": status,
+        "created_at": r["created_at"],
+
+        "firstName": form.get("firstName", ""),
+        "lastName": form.get("lastName", ""),
+        "program": r["program"] or " ",
+
+        "exam_taken": int(r["exam_taken"]), 
+        "approved": int(r["approved"]),
+        "enrolled": int(r["enrolled"]),
+        "rejected": int(r["rejected"]),
+})
 
     return render_template(
         "manage_students.html",
@@ -1090,27 +1098,26 @@ def admin_preview(app_id):
     conn = get_conn()
     c = conn.cursor()
 
+    # Get student form JSON
     c.execute("SELECT form_json FROM applicants WHERE app_id=?", (app_id,))
     row = c.fetchone()
-    if not row:
-        conn.close()
-        flash("Application not found.", "danger")
-        return redirect(url_for("manage_students"))
+    form = json.loads(row["form_json"] or "{}") if row else {}
 
-    form = json.loads(row["form_json"] or "{}")
-
+    # Load documents (photo, psa, form138, good moral, etc.)
     c.execute("SELECT doc_type, file_path FROM documents WHERE app_id=?", (app_id,))
     docs = {d["doc_type"]: d["file_path"] for d in c.fetchall()}
 
+    mode = request.args.get("mode", "view")
+    
     conn.close()
 
     return render_template(
         "admin_preview_edit.html",
-        form=form,
         app_id=app_id,
+        form=form,
         documents=docs,
         photo_filename=docs.get("photo"),
-        admin_mode=True,
+        mode=mode
     )
 #admin saves edited info
 
@@ -1120,68 +1127,60 @@ def admin_save_student(app_id):
     conn = get_conn()
     c = conn.cursor()
 
-    # fetch existing form_json (if any)
-    c.execute("SELECT form_json FROM applicants WHERE app_id=?", (app_id,))
-    row = c.fetchone()
-    if not row:
-        conn.close()
-        flash("Application not found.", "danger")
-        return redirect(url_for("manage_students"))
+    # ------------- Save Form JSON -------------
+    updated_form = {}
 
-    existing = json.loads(row["form_json"] or "{}")
+    # Loop through all POST fields
+    for key in request.form:
+        updated_form[key] = request.form[key]
 
-    # Merge posted fields into form JSON
-    posted = {}
-    for k, v in request.form.items():
-        posted[k] = v.strip() if isinstance(v, str) else v
+    # Convert to JSON and store
+    updated_json = json.dumps(updated_form)
 
-    # Update top-level columns too (first_name/last_name/program) for easy queries
-    first = posted.get("firstName", existing.get("firstName", ""))
-    last = posted.get("lastName", existing.get("lastName", ""))
-    program = posted.get("program", existing.get("program", ""))
+    c.execute(
+        "UPDATE applicants SET form_json=? WHERE app_id=?",
+        (updated_json, app_id)
+    )
 
-    # merge => posted overrides existing
-    merged = existing.copy()
-    merged.update(posted)
-
-    # Save uploaded photo if provided
+    # ------------- Save New Photo (Optional) -------------
     photo = request.files.get("photo")
-    if photo and photo.filename != "" and allowed_file(photo.filename):
-        folder = os.path.join(UPLOAD_ROOT, app_id)
-        os.makedirs(folder, exist_ok=True)
-        filename = secure_filename("photo_" + photo.filename)
-        full = os.path.join(folder, filename)
-        photo.save(full)
-        # save document record (simple replace)
-        c.execute("DELETE FROM documents WHERE app_id=? AND doc_type='photo'", (app_id,))
-        c.execute("INSERT INTO documents (app_id, doc_type, file_path) VALUES (?, 'photo', ?)",
-                  (app_id, f"{app_id}/{filename}"))
-        # update merged json pointer if your templates read documents separately so it's optional
 
-    # update applicants row
-    now = datetime.utcnow().isoformat()
-    c.execute("""
-        UPDATE applicants
-        SET first_name=?, last_name=?, program=?, form_json=?, created_at=COALESCE(created_at, ?)
-        WHERE app_id=?
-    """, (first, last, program, json.dumps(merged), now, app_id))
+    if photo and photo.filename != "":
+        filename = secure_filename(photo.filename)
+        ext = filename.split(".")[-1].lower()
+        new_name = f"{app_id}_photo.{ext}"
+
+        save_path = os.path.join("uploads", "students", new_name)
+        photo.save(save_path)
+
+        # update DB
+        c.execute("""
+            INSERT OR REPLACE INTO documents (app_id, doc_type, file_path)
+            VALUES (?, 'photo', ?)
+        """, (app_id, f"students/{new_name}"))
 
     conn.commit()
     conn.close()
 
-    flash("Student application saved successfully.", "success")
-    # redirect back to admin preview so admin can continue actions
+    # Redirect back to view mode
     return redirect(url_for("admin_preview", app_id=app_id))
-
 
 
 #APPROVE APPLICATION
 @app.route("/admin/approve/<app_id>", methods=["POST"])
 @admin_required
 def admin_approve(app_id):
-    now = datetime.utcnow().isoformat()
     conn = get_conn(); c = conn.cursor()
 
+    # CHECK IF EXAM TAKEN
+    c.execute("SELECT exam_taken FROM application_status WHERE app_id=?", (app_id,))
+    row = c.fetchone()
+
+    if not row or row["exam_taken"] != 1:
+        flash("❌ Cannot approve: Student has NOT taken the exam.", "error")
+        return redirect(url_for("manage_students"))
+
+    now = datetime.utcnow().isoformat()
     c.execute("""
         INSERT INTO application_status (app_id, approved, updated_at)
         VALUES (?, 1, ?)
@@ -1189,15 +1188,24 @@ def admin_approve(app_id):
     """, (app_id, now, now))
 
     conn.commit(); conn.close()
+    flash("✔ Student approved successfully!", "success")
     return redirect(url_for("manage_students"))
 
 #ENROLL
 @app.route("/admin/enroll/<app_id>", methods=["POST"])
 @admin_required
 def admin_enroll(app_id):
-    now = datetime.utcnow().isoformat()
     conn = get_conn(); c = conn.cursor()
 
+    # CHECK IF EXAM TAKEN
+    c.execute("SELECT exam_taken FROM application_status WHERE app_id=?", (app_id,))
+    row = c.fetchone()
+
+    if not row or row["exam_taken"] != 1:
+        flash("❌ Cannot enroll: Student has NOT taken the exam.", "error")
+        return redirect(url_for("manage_students"))
+
+    now = datetime.utcnow().isoformat()
     c.execute("""
         INSERT INTO application_status (app_id, enrolled, updated_at)
         VALUES (?, 1, ?)
@@ -1205,8 +1213,55 @@ def admin_enroll(app_id):
     """, (app_id, now, now))
 
     conn.commit(); conn.close()
-    flash("student enrolled", "success")
+    flash("🎓 Student enrolled successfully!", "success")
     return redirect(url_for("manage_students"))
+
+#REJECT 
+@app.route("/admin/reject/<app_id>", methods=["POST"])
+@admin_required
+def admin_reject(app_id):
+    reason = request.form.get("reason", "No reason provided")
+    now = datetime.utcnow().isoformat()
+
+    conn = get_conn(); c = conn.cursor()
+    c.execute("""
+        INSERT INTO application_status (app_id, rejected, reject_reason, updated_at)
+        VALUES (?, 1, ?, ?)
+        ON CONFLICT(app_id) DO UPDATE SET rejected=1, reject_reason=?, updated_at=?
+    """, (app_id, reason, now, reason, now))
+
+    conn.commit(); conn.close()
+    return redirect(url_for("manage_students"))
+
+#DELETE STUDENTS
+@app.route("/admin/delete-student/<int:student_id>", methods=["POST"])
+@admin_required
+def admin_delete_student(student_id):
+    conn = get_conn()
+    c = conn.cursor()
+
+    # Get all app_ids belonging to this student
+    c.execute("SELECT app_id FROM applicants WHERE student_id=?", (student_id,))
+    apps = [row["app_id"] for row in c.fetchall()]
+
+    # Delete related rows for each app_id
+    for app_id in apps:
+        c.execute("DELETE FROM application_status WHERE app_id=?", (app_id,))
+        c.execute("DELETE FROM exam_schedule WHERE app_id=?", (app_id,))
+        c.execute("DELETE FROM documents WHERE app_id=?", (app_id,))
+        c.execute("DELETE FROM messages WHERE app_id=?", (app_id,))
+
+    # Now delete applicant & student
+    c.execute("DELETE FROM applicants WHERE student_id=?", (student_id,))
+    c.execute("DELETE FROM students WHERE id=?", (student_id,))
+
+    conn.commit()
+    conn.close()
+
+    flash("Student and all related data deleted!", "success")
+    return redirect(url_for("manage_students"))
+
+
 
 #MESSAGE ADMIN
 @app.route("/admin/messages")
@@ -1258,50 +1313,7 @@ def admin_send_message():
 
     return jsonify({"success": True})
 
-#DELETE STUDENTS
-@app.route("/admin/delete-student/<int:student_id>", methods=["POST"])
-@admin_required
-def admin_delete_student(student_id):
-    conn = get_conn()
-    c = conn.cursor()
 
-    # Get all app_ids belonging to this student
-    c.execute("SELECT app_id FROM applicants WHERE student_id=?", (student_id,))
-    apps = [row["app_id"] for row in c.fetchall()]
-
-    # Delete related rows for each app_id
-    for app_id in apps:
-        c.execute("DELETE FROM application_status WHERE app_id=?", (app_id,))
-        c.execute("DELETE FROM exam_schedule WHERE app_id=?", (app_id,))
-        c.execute("DELETE FROM documents WHERE app_id=?", (app_id,))
-        c.execute("DELETE FROM messages WHERE app_id=?", (app_id,))
-
-    # Now delete applicant & student
-    c.execute("DELETE FROM applicants WHERE student_id=?", (student_id,))
-    c.execute("DELETE FROM students WHERE id=?", (student_id,))
-
-    conn.commit()
-    conn.close()
-
-    flash("Student and all related data deleted!", "success")
-    return redirect(url_for("manage_students"))
-
-#REJECT 
-@app.route("/admin/reject/<app_id>", methods=["POST"])
-@admin_required
-def admin_reject(app_id):
-    reason = request.form.get("reason", "No reason provided")
-    now = datetime.utcnow().isoformat()
-
-    conn = get_conn(); c = conn.cursor()
-    c.execute("""
-        INSERT INTO application_status (app_id, rejected, reject_reason, updated_at)
-        VALUES (?, 1, ?, ?)
-        ON CONFLICT(app_id) DO UPDATE SET rejected=1, reject_reason=?, updated_at=?
-    """, (app_id, reason, now, reason, now))
-
-    conn.commit(); conn.close()
-    return redirect(url_for("manage_students"))
 
 # Admin: set exam schedule for an app_id (GET form / POST save)
 @app.route("/admin/set-schedule/<app_id>", methods=["POST"])
@@ -1365,7 +1377,7 @@ def admin_delete_schedule(app_id):
     conn.close()
     return redirect(url_for("admin_exam_schedule"))
 
-#add EXAM SCHEDULE
+#manage student exam schedule
 @app.route("/admin/exam-schedule")
 @admin_required
 def admin_exam_schedule():
@@ -1436,7 +1448,7 @@ def admin_exam_schedule():
         schedules=schedules,
         active_page="exam_schedule"
     )
-
+   
 #retake
 @app.route("/admin/mark-retake/<app_id>", methods=["POST"])
 @admin_required
@@ -1509,6 +1521,12 @@ def admin_mark_exam_taken(app_id):
 
     flash("Marked as Taken.", "success")
     return redirect(url_for("admin_exam_schedule"))
+
+#------ADMIN SETTINGS---------
+@app.route("/admin/settings")
+@admin_required
+def admin_settings():
+    return render_template("admin_settings.html", active_page="settings")
 
 #---------- ADMIN LOGOUT ----------
 @app.route('/admin/logout')
