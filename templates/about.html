@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Padre Garcia Polytechnic College</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', Times, serif;
+            background: white;
+            color: #333;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #001f3f 0%, #0066cc 100%);
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: white;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-family: 'Georgia', serif;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .header-apply-btn {
+            padding: 12px 35px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(57, 91, 243, 0.4);
+            transition: all 0.3s;
+            display: inline-block;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header-apply-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(55, 86, 245, 0.6);
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.3s;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        nav a:hover {
+            color: #64B5F6;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* HERO */
+        .hero-small {
+            background: linear-gradient(135deg, #0066cc 0%, #0080ff 100%),
+                                        url("/images/pgpc2.jpg") 
+                                        no-repeat center/cover;
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+            margin-top: 140px;
+        }
+
+        .hero-small h2 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .hero-small p {
+            font-size: 20px;
+            font-style: italic;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* CONTAINER */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .about-content {
+            background: #f8f9fa;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .about-content h3 {
+            font-size: 32px;
+            color: #001f3f;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .about-content p {
+            font-size: 17px;
+            line-height: 1.9;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .stat-card h4 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .stat-card p {
+            font-size: 16px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: linear-gradient(135deg, #001f3f 0%, #003d7a 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 15px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-small {
+                margin-top: 180px;
+            }
+
+            .about-content {
+                padding: 30px;
+            }
+        }
+         #progressBar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 5px;
+        background: #54d2ef; /* color ng bar */
+        width: 0%;
+        z-index: 9999;
+        }
+    </style>
+</head>
+<div id="progressBar"></div>
+<body>
+
+    <!-- HEADER -->
+    <header id="mainHeader">
+        <div class="header-left">
+            <img src="/images/pgpclogo-removebg-preview.png" alt="PGPC Logo" class="logo">
+            <h1>Padre Garcia Polytechnic College</h1>
+        </div>
+        <div class="nav-container">
+            <nav>
+                <a href="home.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="home.html#programs">Programs</a>
+                <a href="home.html#news">News</a>
+                <a href="contact.html">Contacts</a>
+            </nav>
+            <a href="#" class="header-apply-btn">Apply Now</a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero-small">
+        <h2>About Us</h2>
+        <p>Learn more about our institution's commitment to excellence</p>
+    </section>
+
+    <!-- CONTENT -->
+    <div class="container">
+        <div class="about-content">
+            <h3>Our Story</h3>
+            <p>
+                Padre Garcia Polytechnic College (PGPC) is a premier institution of higher learning located in the heart of Padre Garcia, Batangas. Established with a vision to provide accessible and quality education to the youth of the region, PGPC has grown into a respected educational institution known for its commitment to academic excellence, character formation, and community service.
+            </p>
+            <p>
+                Our college was founded on the principles of integrity, innovation, and social responsibility. We believe that education is not just about imparting knowledge, but about developing well-rounded individuals who can contribute meaningfully to society. Through our diverse academic programs and dedicated faculty, we strive to nurture the talents and potentials of every student who walks through our doors.
+            </p>
+            <p>
+                At PGPC, we foster an environment of learning that encourages critical thinking, creativity, and collaboration. Our state-of-the-art facilities, combined with our student-centered approach, ensure that our graduates are not only academically competent but also morally upright and globally competitive.
+            </p>
+
+            <h3 style="margin-top: 40px;">Why Choose PGPC?</h3>
+            <p>
+                ✓ <strong>Quality Education:</strong> Our programs are designed to meet industry standards and prepare students for real-world challenges.<br><br>
+                ✓ <strong>Experienced Faculty:</strong> Learn from dedicated professors and industry professionals committed to your success.<br><br>
+                ✓ <strong>Modern Facilities:</strong> Access to well-equipped laboratories, libraries, and learning resources.<br><br>
+                ✓ <strong>Affordable Tuition:</strong> Quality education that doesn't break the bank, with various scholarship opportunities.<br><br>
+                ✓ <strong>Community Focus:</strong> Strong emphasis on social responsibility and community engagement.<br><br>
+                ✓ <strong>Career Support:</strong> Comprehensive guidance and placement assistance for our graduates.
+            </p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>1,400+</h4>
+                <p>Active Students</p>
+            </div>
+            <div class="stat-card">
+                <h4>4</h4>
+                <p>Academic Programs</p>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2025 Padre Garcia Polytechnic College</p>
+        <p>padregarciapolytechniccollege@gmail.com | +63 (2) 8524-4611 | Castillo, Padre Garcia, Batangas</p>
+    </footer>
+
+    <script>
+        // Sliding header on scroll
+        let lastScrollTop = 0;
+        const header = document.getElementById('mainHeader');
+        const scrollThreshold = 100;
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > scrollThreshold) {
+                if (scrollTop > lastScrollTop) {
+                    // Scrolling down
+                    header.classList.add('hidden');
+                } else {
+                    // Scrolling up
+                    header.classList.remove('hidden');
+                }
+            } else {
+                // At the top of the page
+                header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        window.onscroll = function() {
+    var scrollTop = document.documentElement.scrollTop;
+    var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var scrolled = (scrollTop / scrollHeight) * 100;
+    document.getElementById("progressBar").style.width = scrolled + "%";
+  };
+    </script>
+
+</body>
+</html>

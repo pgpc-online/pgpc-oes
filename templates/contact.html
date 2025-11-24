@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Padre Garcia Polytechnic College</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: white;
+            color: #333;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #001f3f 0%, #0066cc 100%);
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        header.hidden {
+            transform: translateY(-100%);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: white;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-family: 'Georgia', serif;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .header-apply-btn {
+            padding: 12px 35px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(57, 91, 243, 0.4);
+            transition: all 0.3s;
+            display: inline-block;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header-apply-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(55, 86, 245, 0.6);
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.3s;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        nav a:hover {
+            color: #64B5F6;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+
+        /* HERO */
+        .hero-small {
+            background: linear-gradient(135deg, #0066cc, #0080ff);
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+            margin-top: 140px;
+        }
+
+        .hero-small h2 {
+            font-size: 48px;
+            font-weight: 600;
+        }
+
+        /* CONTACT GRID */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 60px 20px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        /* INTERACTIVE CARDS */
+        .info-card {
+            background: rgba(0, 51, 102, 0.1);
+            padding: 30px;
+            border-radius: 18px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
+            transition: 0.4s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            cursor: pointer;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: #0066cc;
+            box-shadow: 0 10px 25px rgba(0,102,204,0.4);
+        }
+
+        .info-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #0066cc;
+        }
+
+        .info-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #001f3f;
+        }
+
+        .info-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* MAP */
+        .map-section {
+            margin-top: 50px;
+        }
+
+        .map-section h3 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: #001f3f;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 450px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* FOOTER */
+        footer {
+            background: linear-gradient(135deg, #001f3f, #003d7a);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 60px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .contact-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-small {
+                margin-top: 180px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+         #progressBar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 5px;
+        background: #54d2ef; /* color ng bar */
+        width: 0%;
+        z-index: 9999;
+        }
+    </style>
+</head>
+<div id="progressBar"></div>
+<body>
+
+    <header id="mainHeader">
+        <div class="header-left">
+            <img src="/images/pgpclogo-removebg-preview.png" alt="PGPC Logo" class="logo">
+            <h1>Padre Garcia Polytechnic College</h1>
+        </div>
+        <div class="nav-container">
+            <nav>
+                <a href="home.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="home.html#programs">Programs</a>
+                <a href="home.html#news">News</a>
+                <a href="contact.html">Contacts</a>
+            </nav>
+            <a href="#" class="header-apply-btn">Apply Now</a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero-small">
+        <h2>Contact Us</h2>
+        <p>We'd love to hear from you</p>
+    </section>
+
+    <div class="container">
+
+        <!-- INTERACTIVE CONTACT CARDS -->
+        <div class="contact-grid">
+
+            <!-- ADDRESS -->
+            <div class="info-card">
+                <div class="info-icon">📍</div>
+                <div class="info-title">Address</div>
+                <div class="info-text">
+                    Castillo, Padre Garcia,<br>
+                    Batangas, Philippines 4224
+                </div>
+            </div>
+
+            <!-- PHONE -->
+            <div class="info-card">
+                <div class="info-icon">📞</div>
+                <div class="info-title">Phone</div>
+                <div class="info-text">
+                    +63 (2) 8524-4611
+                </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="info-card">
+                <div class="info-icon">✉️</div>
+                <div class="info-title">Email</div>
+                <div class="info-text">
+                    padregarciapolytechniccollege@gmail.com
+                </div>
+            </div>
+
+            <!-- HOURS -->
+            <div class="info-card">
+                <div class="info-icon">🕒</div>
+                <div class="info-title">Office Hours</div>
+                <div class="info-text">
+                    Mon–Sat: 8:00 AM – 5:00 PM<br>
+                    Sunday: Closed
+                </div>
+            </div>
+
+        </div>
+
+        <!-- MAP -->
+        <div class="map-section">
+            <h3>Our Location</h3>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3873.2670747612738!2d121.2669114589386!3d13.88297243744148!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bd3f0024d47b1b%3A0x111daf1b2a29e55e!2sPadre%20Garcia%20Polytechnic%20College!5e0!3m2!1sen!2sph!4v1763564657720!5m2!1sen!2sph"></iframe>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2025 Padre Garcia Polytechnic College</p>
+        <p>padregarciapolytechniccollege@gmail.com | +63 (2) 8524-4611 | Castillo, Padre Garcia, Batangas</p>
+    </footer>
+
+    <script>
+        // Sliding header on scroll
+        let lastScrollTop = 0;
+        const header = document.getElementById('mainHeader');
+        const scrollThreshold = 100;
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > scrollThreshold) {
+                if (scrollTop > lastScrollTop) {
+                    // Scrolling down
+                    header.classList.add('hidden');
+                } else {
+                    // Scrolling up
+                    header.classList.remove('hidden');
+                }
+            } else {
+                // At the top of the page
+                header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        window.onscroll = function() {
+    var scrollTop = document.documentElement.scrollTop;
+    var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    var scrolled = (scrollTop / scrollHeight) * 100;
+    document.getElementById("progressBar").style.width = scrolled + "%";
+  };
+    </script>
+
+</body>
+</html>
