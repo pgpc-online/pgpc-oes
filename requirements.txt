@@ -1,0 +1,11 @@
+Flask
+Flask-Mail
+python-docx
+Werkzeug
+jinja2
+itsdangerous
+click
+blinker
+MarkupSafe
+python-dotenv
+Pillow
