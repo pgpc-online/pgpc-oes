@@ -209,7 +209,7 @@ td {
         <span class="badge badge-green">Approved</span>
     {% elif s.status == "Rejected" %}
         <span class="badge badge-red">Rejected</span>
-    {% elif s.status == "Exam_taken" %}
+    {% elif s.status == "Exam Taken" %}
         <span class="badge badge-blue">Exam Taken</span>
     {% elif s.status == "Enrolled" %}
         <span class="badge badge-purple">Enrolled</span>
@@ -219,16 +219,24 @@ td {
             <td class="actions">
 
     <!-- View -->
-    
-    <a href="{{ url_for('admin_preview', app_id=s.app_id) }}" title="View Application" class="btn btn-view">
-        <i class="fa-solid fa-eye"></i>
-    </a>
+    {% if s.app_id %}
+    <a href="{{ url_for('admin_preview', app_id=s.app_id) }}" class="btn btn-view"><i class="fa-solid fa-eye"></i></a>
+{% else %}
+    <span class="btn btn-disabled" style="opacity:0.5; cursor:not-allowed;">No Application</span>
+{% endif %}
     
     <!-- Message -->
+    {% if s.app_id %}
     <a class="btn btn-msg" title="Message Student"
        href="{{ url_for('admin_messages', app_id=s.app_id) }}">
         <i class="fa-solid fa-envelope"></i>
     </a>
+{% else %}
+    <span class="btn btn-msg" style="opacity:0.4; pointer-events:none;" 
+          title="No application yet">
+        <i class="fa-solid fa-envelope"></i>
+    </span>
+{% endif %}
 
     <!-- Kebab Menu -->
     <div class="action-menu">
@@ -243,7 +251,7 @@ td {
 {% elif s.status == "Rejected" %}
   <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Cannot approve — rejected">Approve</button>
 
-{% elif s.get('exam_taken', 0) | int != 1 %}
+{% elif s.exam_taken != 1 %}
   <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Cannot approve — exam not taken">Approve</button>
 
 {% else %}
@@ -252,13 +260,14 @@ td {
   </form>
 {% endif %}
        
+       <!-- ENROLL -->
        {% if s.status == "Enrolled" %}
   <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Already enrolled">Enroll</button>
 
 {% elif s.status == "Rejected" %}
   <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Cannot enroll — rejected">Enroll</button>
 
-{% elif s.get('exam_taken', 0) | int != 1 %}
+{% elif s.exam_taken != 1 %}
   <button type="button" style="opacity:0.5; cursor:not-allowed;" title="Cannot enroll — exam not taken">Enroll</button>
 
 {% else %}

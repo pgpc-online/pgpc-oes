@@ -639,30 +639,37 @@
     <!-- HEADER -->
     <header id="mainHeader">
         <div class="header-left">
-            <img src="/images/pgpclogo-removebg-preview.png" alt="PGPC Logo" class="logo">
+            <img src="{{ url_for('static', filename='images/pgpclogo-removebg-preview.png') }}" alt="PGPC Logo" class="logo">
             <h1>Padre Garcia Polytechnic College</h1>
         </div>
         <div class="nav-container">
             <nav>
-                <a href="home.html">Home</a>
-                <a href="about.html">About</a>
-                <a href="home.html#programs">Programs</a>
-                <a href="home.html#news">News</a>
-                <a href="contact.html">Contacts</a>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('index') }}#programs">Programs</a>
+                <a href="{{ url_for('index') }}#news">News</a>
+                <a href="{{ url_for('contact') }}">Contacts</a>
             </nav>
-            <a href="#" class="header-apply-btn">Apply Now</a>
+            <a href="{{ url_for('login_page') }}" class="header-apply-btn">Apply Now</a>
+            
         </div>
     </header>
 
     <!-- HERO -->
     <section class="hero" id="home">
         <div class="hero-slider">
-            <div class="hero-slide active" style="background-image: url('/images/pgpc_backgrounds_images/pgpc1.jpg')"></div>
-            <div class="hero-slide" style="background-image: url('/images/pgpc_backgrounds_images/pgpc2.jpg')"></div>
-            <div class="hero-slide" style="background-image: url('/images/pgpc_backgrounds_images/pgpc3.jpg')"></div>
-            <div class="hero-slide" style="background-image: url('/images/pgpc_backgrounds_images/pgpc4.jpg')"></div>
-            <div class="hero-slide" style="background-image: url('/images/pgpc_backgrounds_images/pgpc5.jpg')"></div>
-            <div class="hero-slide" style="background-image: url('/images/pgpc_backgrounds_images/pgpc6.jpg')"></div>
+            {% set img1 = url_for('static', filename='images/pgpc1.jpg') %}
+            {% set img2 = url_for('static', filename='images/pgpc2.jpg') %}
+            {% set img3 = url_for('static', filename='images/pgpc3.jpg') %}
+            {% set img4 = url_for('static', filename='images/pgpc4.jpg') %}
+            {% set img5 = url_for('static', filename='images/pgpc5.jpg') %}
+            {% set img6 = url_for('static', filename='images/pgpc6.jpg') %}
+            <div class="hero-slide active" style="background-image: url('{{ img1 }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ img2 }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ img3 }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ img4 }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ img5 }}')"></div>
+            <div class="hero-slide" style="background-image: url('{{ img6 }}')"></div>
         </div>
         
         <button class="slider-btn prev" onclick="changeSlide(-1)">‹</button>
@@ -679,7 +686,7 @@
 
         <h2>Welcome to PGPC</h2>
         <p>Excellence in Education, Leadership in Innovation</p>
-        <button class="hero-btn">Apply Now</button>
+        <a href="{{ url_for('login_page') }}" class="hero-btn" style="display: inline-block; text-decoration: none; color: white;">Apply Now</a>
     </section>
 
     <!-- CONTAINER -->
@@ -690,31 +697,31 @@
             <p>Discover our comprehensive range of programs designed to prepare you for success in your chosen field.</p>
             <div class="programs">
                 <div class="program-card">
-                    <img src="/images/cslogo-removebg-preview.png" class="program-icon" alt="CS Icon">
+                    <img src="{{ url_for('static', filename='images/cslogo-removebg-preview.png') }}" class="program-icon" alt="CS Icon">
                     <h3>Computer Science</h3>
                     <p>Learn programming, AI, cybersecurity, and software development with industry-leading faculty.</p>
-                    <a href="cs.html" class="view-program-btn">View Program</a>
+                    <a href="{{ url_for('cs') }}" class="view-program-btn">View Program</a>
                 </div>
 
                 <div class="program-card">
-                    <img src="/images/malogo-removebg-preview.png" class="program-icon" alt="MA Icon">
+                    <img src="{{ url_for('static', filename='images/malogo-removebg-preview.png') }}" class="program-icon" alt="MA Icon">
                     <h3>Management Accounting</h3>
                     <p>Develop skills in financial analysis, cost management, and business strategy.</p>
-                    <a href="ma.html" class="view-program-btn">View Program</a>
+                    <a href="{{ url_for('ma') }}" class="view-program-btn">View Program</a>
                 </div>
 
                 <div class="program-card">
-                    <img src="/images/crimlogo-removebg-preview.png" class="program-icon" alt="Crim Icon">
+                    <img src="{{ url_for('static', filename='images/crimlogo-removebg-preview.png') }}" class="program-icon" alt="Crim Icon">
                     <h3>Criminology</h3>
                     <p>Study law enforcement, forensic science, criminal behavior, and investigation techniques.</p>
-                    <a href="crim.html" class="view-program-btn">View Program</a>
+                    <a href="{{ url_for('crim') }}" class="view-program-btn">View Program</a>
                 </div>
 
                 <div class="program-card">
                     <img src="/images/palogo-removebg-preview.png" class="program-icon" alt="PA Icon">
                     <h3>Public Administration</h3>
                     <p>Learn governance, policy management, leadership, and public service operations.</p>
-                    <a href="pa.html" class="view-program-btn">View Program</a>
+                    <a href="{{ url_for('pa') }}" class="view-program-btn">View Program</a>
                 </div>
             </div>
         </section>
@@ -725,7 +732,7 @@
             <div class="news-grid-modern">
 
                 <div class="news-card-modern">
-                    <img src="/images/news1.jpg" alt="Campus Fun Run">
+                    <img src="{{ url_for('static', filename='images/news1.png') }}" alt="Campus Fun Run">
                     <div class="news-card-content">
                         <div>
                             <div class="news-date">18 Nov 2025</div>
@@ -736,7 +743,7 @@
                 </div>
 
                 <div class="news-card-modern">
-                    <img src="/images/news2.jpg" alt="Research Hub">
+                    <img src="{{ url_for('static', filename='images/news2.png') }}" alt="Research Hub">
                     <div class="news-card-content">
                         <div>
                             <div class="news-date">18 Nov 2025</div>
@@ -747,7 +754,7 @@
                 </div>
 
                 <div class="news-card-modern">
-                    <img src="/images/news3.jpg" alt="Scholarships">
+                    <img src="{{ url_for('static', filename='images/news3.png') }}" alt="Scholarships">
                     <div class="news-card-content">
                         <div>
                             <div class="news-date">18 Nov 2025</div>
@@ -758,7 +765,7 @@
                 </div>
 
                 <div class="news-card-modern">
-                    <img src="/images/news4.jpg" alt="Cultural Event">
+                    <img src="{{ url_for('static', filename='images/news4.png') }}" alt="Cultural Event">
                     <div class="news-card-content">
                         <div>
                             <div class="news-date">12 Nov 2025</div>
@@ -769,7 +776,7 @@
                 </div>
 
                 <div class="news-card-modern">
-                    <img src="/images/news5.jpg" alt="Sports Meet">
+                    <img src="{{ url_for('static', filename='images/news5.png') }}" alt="Sports Meet">
                     <div class="news-card-content">
                         <div>
                             <div class="news-date">12 Nov 2025</div>
@@ -780,7 +787,7 @@
                 </div>
 
                 <div class="news-card-modern">
-                    <img src="/images/news6.jpg" alt="Tech Summit">
+                    <img src="{{ url_for('static', filename='images/news6.png') }}" alt="Tech Summit">
                     <div class="news-card-content">
                         <div>
                             <div class="news-date">18 Oct 2025</div>

@@ -7,7 +7,6 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from docx.shared import Mm
 from flask_mail import Mail, Message
-import time
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -195,7 +194,32 @@ def generate_application_id():
 
 @app.route("/")
 def index():
-    return render_template('homepage.html')
+    return render_template('home.html')
+
+@app.route("/about")
+def about():
+    return render_template('about.html')
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+@app.route("/crim")
+def crim():
+    return render_template("crim.html")
+
+@app.route("/cs")
+def cs():
+    return render_template("cs.html")
+
+@app.route("/ma")
+def ma():
+    return render_template("ma.html")
+
+@app.route("/pa")
+def pa():
+    return render_template("pa.html")
+
 
 
 @app.route("/login", methods=["GET"])
@@ -866,8 +890,8 @@ def admin_dashboard():
     conn = get_conn()
     c = conn.cursor()
 
-    # Total number of students
-    c.execute("SELECT COUNT(*) FROM students")
+    # Total number of students with applications
+    c.execute("SELECT COUNT(DISTINCT student_id) FROM applicants")
     total_students = c.fetchone()[0]
 
     # Total submitted applications
@@ -1012,9 +1036,9 @@ def manage_students():
     END AS status
 
     FROM students s
-    LEFT JOIN applicants a ON a.student_id = s.id
+    LEFT JOIN applicants a ON a.student_id = s.id AND a.app_id IS NOT NULL
     LEFT JOIN application_status st ON st.app_id = a.app_id
-    WHERE 1=1
+    WHERE a.app_id IS NOT NULL
     """
 
     params = []
