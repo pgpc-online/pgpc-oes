@@ -17,10 +17,11 @@ mainFolder/
 │   ├── admin_login.html
 │   ├── admin_messages.html
 │   ├── admin_preview_edit.html
+├── ├── adminsettings.html
 │   ├── adminbase.html
 │   ├── form.html
 │   ├── formbase.html
-│   ├── homepage.html
+│   ├── home.html
 │   ├── loginn.html
 │   ├── manage_students.html
 │   ├── preview.html
@@ -30,6 +31,7 @@ mainFolder/
 └── database/
     └── main.db
 
+added(about, contact, cs, crim, ma ,pa...)
 2• INSTALLATION GUIDE
 
 

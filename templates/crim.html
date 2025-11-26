@@ -113,19 +113,23 @@
 
 <header id="mainHeader">
     <div class="header-left">
-        <img src="/images/pgpclogo-removebg-preview.png" alt="PGPC Logo" class="logo">
+        <img src="{{ url_for('static', filename='images/pgpclogo-removebg-preview.png') }}" alt="PGPC Logo" class="logo">
         <h1>Padre Garcia Polytechnic College</h1>
     </div>
-    <a href="#" class="header-apply-btn">Apply Now</a>
-    <a href="home.html" class="back-btn">← Back to Home</a>
+    <a href="{{ url_for('login_page') }}" class="header-apply-btn">Apply Now</a>
+    <a href="{{ url_for('index') }}" class="back-btn">← Back to Home</a>
 </header>
 
 <section class="program-hero">
     <div class="hero-slider">
-        <div class="hero-slide active" style="background-image: url('/images/pgpc_backgrounds_images/crim1.jpg')"></div>
-        <div class="hero-slide" style="background-image: url('/images/pgpc_backgrounds_images/crim2.jpg')"></div>
-        <div class="hero-slide" style="background-image: url('/images/pgpc_backgrounds_images/crim3.jpg')"></div>
-        <div class="hero-slide" style="background-image: url('/images/pgpc_backgrounds_images/crim4.jpg')"></div>
+        {% set crim1 = url_for('static', filename='images/pgpc_backgrounds_images/crim1.jpg') %}
+        {% set crim2 = url_for('static', filename='images/pgpc_backgrounds_images/crim2.jpg') %}
+        {% set crim3 = url_for('static', filename='images/pgpc_backgrounds_images/crim3.jpg') %}
+        {% set crim4 = url_for('static', filename='images/pgpc_backgrounds_images/crim4.jpg') %}
+        <div class="hero-slide active" style="background-image: url('{{ crim1 }}')"></div>
+        <div class="hero-slide" style="background-image: url('{{ crim2 }}')"></div>
+        <div class="hero-slide" style="background-image: url('{{ crim3 }}')"></div>
+        <div class="hero-slide" style="background-image: url('{{ crim4 }}')"></div>
     </div>
     
     <button class="slider-btn prev" onclick="changeSlide(-1)">‹</button>
@@ -138,7 +142,7 @@
         <span class="indicator" onclick="goToSlide(3)"></span>
     </div>
 
-    <img src="/images/crimlogo-removebg-preview.png" class="program-icon-large" alt="Criminology Icon">
+    <img src="{{ url_for('static', filename='images/crimlogo-removebg-preview.png') }}" class="program-icon-large" alt="Criminology Icon">
     <h2>Bachelor of Science in Criminology</h2>
     <p>Analyze. Strategize. Excel.</p>
 </section>

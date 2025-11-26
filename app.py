@@ -464,7 +464,8 @@ def form_page():
 
         conn.commit()
 
-        # handle photo upload (same as before)
+        
+
         photo = request.files.get("pic2x2") or request.files.get("photo")
         if photo and photo.filename != "" and allowed_file(photo.filename):
             folder = os.path.join(UPLOAD_ROOT, app_id)
@@ -1268,12 +1269,19 @@ def admin_delete_student(student_id):
     c.execute("SELECT app_id FROM applicants WHERE student_id=?", (student_id,))
     apps = [row["app_id"] for row in c.fetchall()]
 
-    # Delete related rows for each app_id
+    # Delete related rows and files for each app_id
     for app_id in apps:
+
+    # Delete database records
         c.execute("DELETE FROM application_status WHERE app_id=?", (app_id,))
         c.execute("DELETE FROM exam_schedule WHERE app_id=?", (app_id,))
-        c.execute("DELETE FROM documents WHERE app_id=?", (app_id,))
         c.execute("DELETE FROM messages WHERE app_id=?", (app_id,))
+        c.execute("DELETE FROM documents WHERE app_id=?", (app_id,))
+
+    # Delete uploaded files folder for this app_id
+    app_folder = os.path.join(UPLOAD_ROOT, str(app_id))
+    if os.path.exists(app_folder):
+        shutil.rmtree(app_folder)
 
     # Now delete applicant & student
     c.execute("DELETE FROM applicants WHERE student_id=?", (student_id,))

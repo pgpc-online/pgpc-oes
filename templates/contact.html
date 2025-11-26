@@ -259,18 +259,18 @@
 
     <header id="mainHeader">
         <div class="header-left">
-            <img src="/images/pgpclogo-removebg-preview.png" alt="PGPC Logo" class="logo">
+            <img src="{{ url_for('static', filename='images/pgpclogo-removebg-preview.png') }}" alt="PGPC Logo" class="logo">
             <h1>Padre Garcia Polytechnic College</h1>
         </div>
         <div class="nav-container">
             <nav>
-                <a href="home.html">Home</a>
-                <a href="about.html">About</a>
-                <a href="home.html#programs">Programs</a>
-                <a href="home.html#news">News</a>
-                <a href="contact.html">Contacts</a>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('index') }}#programs">Programs</a>
+                <a href="{{ url_for('index') }}#news">News</a>
+                <a href="{{ url_for('contact') }}">Contacts</a>
             </nav>
-            <a href="#" class="header-apply-btn">Apply Now</a>
+            <a href="{{ url_for('login_page') }}" class="header-apply-btn">Apply Now</a>
         </div>
     </header>
 
